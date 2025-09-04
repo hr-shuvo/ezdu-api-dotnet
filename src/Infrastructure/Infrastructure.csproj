@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Folder Include="BackgroundJobs\" />
+      <Folder Include="Data\Configurations\" />
+      <Folder Include="Data\Interceptors\" />
+      <Folder Include="Data\Seeds\" />
+      <Folder Include="Extensions\" />
+      <Folder Include="Repositories\" />
+      <Folder Include="Services\Cashing\" />
+      <Folder Include="Services\External\" />
+      <Folder Include="Services\Identity\" />
+    </ItemGroup>
+
+</Project>
