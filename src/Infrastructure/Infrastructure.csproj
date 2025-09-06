@@ -3,19 +3,25 @@
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <Nullable>disable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
       <Folder Include="BackgroundJobs\" />
-      <Folder Include="Data\Configurations\" />
-      <Folder Include="Data\Interceptors\" />
-      <Folder Include="Data\Seeds\" />
-      <Folder Include="Extensions\" />
       <Folder Include="Repositories\" />
       <Folder Include="Services\Cashing\" />
       <Folder Include="Services\External\" />
       <Folder Include="Services\Identity\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.19" />
+      <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.19" />
+      <PackageReference Include="MySql.EntityFrameworkCore" Version="8.0.17" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Domain\Domain.csproj" />
     </ItemGroup>
 
 </Project>
