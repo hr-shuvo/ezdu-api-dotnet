@@ -8,10 +8,8 @@
 
     <ItemGroup>
       <Folder Include="BackgroundJobs\" />
-      <Folder Include="Repositories\" />
       <Folder Include="Services\Cashing\" />
       <Folder Include="Services\External\" />
-      <Folder Include="Services\Identity\" />
     </ItemGroup>
 
     <ItemGroup>
@@ -21,7 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Domain\Domain.csproj" />
+      <ProjectReference Include="..\Core\Core.csproj" />
     </ItemGroup>
 
 </Project>

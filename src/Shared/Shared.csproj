@@ -12,7 +12,6 @@
       <Folder Include="Helpers\" />
       <Folder Include="Models\Configuration\" />
       <Folder Include="Models\Pagination\" />
-      <Folder Include="Models\Response\" />
     </ItemGroup>
 
 </Project>
