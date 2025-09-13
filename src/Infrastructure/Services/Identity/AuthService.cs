@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Core.App.Services;
 using Core.DTOs.Auth;
 using Core.Entities.Identity;
+using Core.Errors;
 using Microsoft.AspNetCore.Identity;
 
 namespace Infrastructure.Services.Identity;
@@ -17,12 +18,12 @@ public class AuthService : IAuthService
     }
 
 
-    public Task<UserDto> LoginAsync(LoginDto loginDto)
+    public Task<UserAuthDto> LoginAsync(LoginDto loginDto)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<UserDto> RegisterAsync(RegisterDto registerDto)
+    public async Task<UserAuthDto> RegisterAsync(RegisterDto registerDto)
     {
         try
         {
@@ -30,15 +31,29 @@ public class AuthService : IAuthService
 
             if (existingUser is not null)
             {
-                throw new Exception("Email is already in use");
+                throw new AppException(400, "Email is already in use");
             }
             
-            throw new NotImplementedException();
+            var user = new AppUser
+            {
+                Email = registerDto.Email,
+                UserName = registerDto.Email
+            };
+            
+            var result = await _userManager.CreateAsync(user, registerDto.Password);
+            
+            if (!result.Succeeded)
+            {
+                throw new AppException(400);
+            }
+            
+            var userDto = ToUserAuthDto(user);
+            return userDto;
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
-            throw;
+            throw new Exception();
         }
     }
 
@@ -51,4 +66,22 @@ public class AuthService : IAuthService
     {
         throw new NotImplementedException();
     }
+
+
+
+
+    #region Private Methods
+
+    private UserAuthDto ToUserAuthDto(AppUser user)
+    {
+        var userDto = new UserAuthDto
+        {
+            Username = user.UserName,
+            Name = user.UserName
+        };
+        
+        return userDto;
+    }
+
+    #endregion
 }

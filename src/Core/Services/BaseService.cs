@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
+using Core.DTOs.Common;
 using Core.Services.Interfaces;
-using Domain.Entities.Common;
 using Domain.Interfaces.Repositories;
 
 namespace Core.Services;

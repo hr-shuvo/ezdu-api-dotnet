@@ -5,8 +5,8 @@ namespace Core.App.Services;
 
 public interface IAuthService
 {
-    Task<UserDto> LoginAsync(LoginDto loginDto);
-    Task<UserDto> RegisterAsync(RegisterDto registerDto);
+    Task<UserAuthDto> LoginAsync(LoginDto loginDto);
+    Task<UserAuthDto> RegisterAsync(RegisterDto registerDto);
     
     Task<bool> ExistsByEmailAsync(string email);
     Task<UserDto> GetCurrentUser(ClaimsPrincipal httpContextUser);

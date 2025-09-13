@@ -34,7 +34,7 @@ public class AuthController : BaseApiController
 
     
     [HttpPost("login")]
-    public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
+    public async Task<ActionResult<UserAuthDto>> Login(LoginDto loginDto)
     {
         var user = await _authService.LoginAsync(loginDto);
         if (user == null) return Unauthorized();

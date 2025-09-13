@@ -1,6 +1,12 @@
 using System.Text;
+using Core.App.Services;
 using Core.Entities.Identity;
+using Core.Services;
+using Core.Services.Interfaces;
+using Domain.Interfaces.Repositories;
 using Infrastructure.Data;
+using Infrastructure.Repositories;
+using Infrastructure.Services.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +22,24 @@ public static class ServiceCollectionExtensions
     {
         services.AddDatabaseServices(configuration);
         services.AddAuthenticationServices(configuration);
-        
+
+        #region DI
+
+        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IUserService, UserService>();
+
+
+
+
+
+
+
+
+
+        services.AddScoped<IUserRepository, UserRepository>();
+
+        #endregion
+
     }
 
     private static void AddDatabaseServices(this IServiceCollection services, IConfiguration configuration)
