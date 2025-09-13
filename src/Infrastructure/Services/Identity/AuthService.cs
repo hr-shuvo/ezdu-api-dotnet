@@ -4,17 +4,20 @@ using Core.DTOs.Auth;
 using Core.Entities.Identity;
 using Core.Errors;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Services.Identity;
 
 public class AuthService : IAuthService
 {
     private readonly UserManager<AppUser> _userManager;
+    private readonly ILogger<AuthService> _logger;
     
 
-    public AuthService(UserManager<AppUser> userManager)
+    public AuthService(UserManager<AppUser> userManager, ILogger<AuthService> logger)
     {
         _userManager = userManager;
+        _logger = logger;
     }
 
 
@@ -25,36 +28,29 @@ public class AuthService : IAuthService
 
     public async Task<UserAuthDto> RegisterAsync(RegisterDto registerDto)
     {
-        try
-        {
-            var existingUser = await _userManager.FindByEmailAsync(registerDto.Email);
+        var existingUser = await _userManager.FindByEmailAsync(registerDto.Email);
 
-            if (existingUser is not null)
-            {
-                throw new AppException(400, "Email is already in use");
-            }
-            
-            var user = new AppUser
-            {
-                Email = registerDto.Email,
-                UserName = registerDto.Email
-            };
-            
-            var result = await _userManager.CreateAsync(user, registerDto.Password);
-            
-            if (!result.Succeeded)
-            {
-                throw new AppException(400);
-            }
-            
-            var userDto = ToUserAuthDto(user);
-            return userDto;
-        }
-        catch (Exception e)
+        if (existingUser is not null)
         {
-            Console.WriteLine(e);
-            throw new Exception();
+            throw new AppException("Email is already in use");
         }
+
+        var user = new AppUser
+        {
+            Email = registerDto.Email,
+            UserName = registerDto.Email
+        };
+
+        var result = await _userManager.CreateAsync(user, registerDto.Password);
+
+        if (!result.Succeeded)
+        {
+            throw new AppException(400);
+        }
+
+        var userDto = ToUserAuthDto(user);
+        
+        return userDto;
     }
 
     public Task<bool> ExistsByEmailAsync(string email)

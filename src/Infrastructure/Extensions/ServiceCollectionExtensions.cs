@@ -1,6 +1,8 @@
 using System.Text;
+using System.Text.Json;
 using Core.App.Services;
 using Core.Entities.Identity;
+using Core.Errors;
 using Core.Services;
 using Core.Services.Interfaces;
 using Domain.Interfaces.Repositories;
@@ -8,6 +10,7 @@ using Infrastructure.Data;
 using Infrastructure.Repositories;
 using Infrastructure.Services.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -86,15 +89,32 @@ public static class ServiceCollectionExtensions
                     {
                         var accessToken = context.Request.Query["access_token"];
                         var path = context.HttpContext.Request.Path;
-                        
+                
                         if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
                         {
                             context.Token = accessToken;
                         }
-
+                
                         return Task.CompletedTask;
+                    },
+                    OnChallenge = context =>
+                    {
+                        context.HandleResponse();
+                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        context.Response.ContentType = "application/json";
+                        var result = JsonSerializer.Serialize(new ApiExceptionResponse(401));
+                        return context.Response.WriteAsync(result);
+                    },
+                    OnForbidden = context =>
+                    {
+                        context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                        context.Response.ContentType = "application/json";
+                        var result = JsonSerializer.Serialize(new ApiExceptionResponse(403));
+                        return context.Response.WriteAsync(result);
                     }
                 };
+
+
             });
     }
 }

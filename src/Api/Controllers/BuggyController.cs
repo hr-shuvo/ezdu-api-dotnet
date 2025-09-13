@@ -29,7 +29,8 @@ public class BuggyController : BaseApiController
         var thing = _context.Users!.Find(42L);
 
         if (thing == null)
-            return NotFound(new ApiResponse(404));
+            throw new AppException(404);
+            // return NotFound(new ApiResponse(404));
 
         return Ok();
     }
@@ -47,12 +48,14 @@ public class BuggyController : BaseApiController
     [HttpGet("badrequest")]
     public ActionResult<string> GetBadRequest()
     {
-        return BadRequest(new ApiResponse(400));
+        // return BadRequest(new ApiResponse(400));
+        throw new AppException(400);
     }
 
     [HttpGet("badrequest/{id}")]
     public ActionResult<string> GetBadRequest(long id)
     {
-        return Ok(new ApiResponse(400));
+        // return Ok(new ApiResponse(400));
+        throw new AppException(400);
     }
 }

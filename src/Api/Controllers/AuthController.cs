@@ -48,7 +48,6 @@ public class AuthController : BaseApiController
     {
         var user = await _authService.RegisterAsync(registerDto);
         
-        if (user == null) return BadRequest("Problem registering user");
         
         return Ok(user);
         
