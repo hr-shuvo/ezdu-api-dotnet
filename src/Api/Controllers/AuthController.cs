@@ -1,5 +1,4 @@
 using Core.App.Controllers;
-using Core.App.Services;
 using Core.DTOs.Auth;
 using Core.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;

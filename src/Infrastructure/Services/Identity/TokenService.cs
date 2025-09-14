@@ -1,7 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Core.App.Services;
 using Core.Entities.Identity;
 using Core.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
@@ -26,7 +25,9 @@ public class TokenService : ITokenService
         var claims = new List<Claim>
         {
             new Claim(JwtRegisteredClaimNames.Email, user.Email!),
-            new Claim(JwtRegisteredClaimNames.GivenName, user.UserName!)
+            new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName!),
+            new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
+            
         };
 
         var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);

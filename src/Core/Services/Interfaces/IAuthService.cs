@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using Core.DTOs.Auth;
 
-namespace Core.App.Services;
+namespace Core.Services.Interfaces;
 
 public interface IAuthService
 {

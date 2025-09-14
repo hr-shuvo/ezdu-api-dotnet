@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using Core.App.Services;
 using Core.DTOs.Auth;
 using Core.Entities.Identity;
 using Core.Errors;
@@ -148,6 +147,7 @@ public class AuthService : IAuthService
         try
         {
             var username = User.GetUsername();
+            var userId = User.GetUserId();
 
             if (string.IsNullOrEmpty(username))
             {
