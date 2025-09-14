@@ -9,5 +9,5 @@ public interface IAuthService
     Task<UserAuthDto> RegisterAsync(RegisterDto registerDto);
     
     Task<bool> ExistsByEmailAsync(string email);
-    Task<UserDto> GetCurrentUser(ClaimsPrincipal httpContextUser);
+    Task<UserAuthDto> GetCurrentUser(ClaimsPrincipal httpContextUser);
 }
