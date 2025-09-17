@@ -3,6 +3,8 @@ using Core.DTOs.Auth;
 using Core.Entities.Identity;
 using Core.Errors;
 using Core.Services.Interfaces;
+using Core.Shared.Models.Messaging;
+using Core.Shared.Services.Interfaces;
 using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -17,16 +19,20 @@ public class AuthService : IAuthService
     private readonly ITokenService _tokenService;
     private readonly ILogger<AuthService> _logger;
 
+    private readonly IEmailService _emailService;
+
 
     public AuthService(UserManager<AppUser> userManager,
         SignInManager<AppUser> signInManager,
         ITokenService tokenService,
-        ILogger<AuthService> logger)
+        ILogger<AuthService> logger,
+        IEmailService emailService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _tokenService = tokenService;
         _logger = logger;
+        _emailService = emailService;
     }
 
 
@@ -49,6 +55,29 @@ public class AuthService : IAuthService
             if (result.Succeeded)
             {
                 var userDto = ToUserAuthDto(user);
+
+                #region Send Login Notification Email
+
+                var message = new EmailMessage()
+                {
+                    To = user.Email,
+                    ToName = user.UserName,
+                    Subject = "New Login Notification",
+                    Body =
+                        $"Hello {user.UserName},\n\nWe noticed a new login to your account " +
+                        $"on {DateTime.UtcNow} UTC.\n\nIf this was you, no further action is needed.\n\n" +
+                        $"If you did not log in, please reset your password immediately and contact support.\n\n" +
+                        $"Best regards,\nYour Company",
+                    IsHtml = true,
+                };
+                
+                bool emailSent = await _emailService.SendLoginNotificationEmailAsync(user.Email, user.UserName);
+                if (!emailSent)
+                {
+                    _logger.LogWarning("Failed to send login notification email to {Email}", user.Email);
+                }
+
+                #endregion
 
 
                 return userDto;
@@ -142,12 +171,11 @@ public class AuthService : IAuthService
         }
     }
 
-    public async Task<UserAuthDto> GetCurrentUser(ClaimsPrincipal User)
+    public async Task<UserAuthDto> GetCurrentUser(ClaimsPrincipal contextUser)
     {
         try
         {
-            var username = User.GetUsername();
-            var userId = User.GetUserId();
+            var username = contextUser.GetUsername();
 
             if (string.IsNullOrEmpty(username))
             {

@@ -1,5 +1,7 @@
 using Core.Services;
 using Core.Services.Interfaces;
+using Core.Shared.Services;
+using Core.Shared.Services.Interfaces;
 using Domain.Interfaces.Repositories;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
@@ -23,6 +25,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<ITokenService, TokenService>();
+        services.AddSingleton<IEmailService, EmailService>();
 
 
 
