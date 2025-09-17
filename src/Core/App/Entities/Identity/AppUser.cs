@@ -1,7 +1,7 @@
 using Core.DTOs.Common;
 using Microsoft.AspNetCore.Identity;
 
-namespace Core.Entities.Identity;
+namespace Core.App.Entities.Identity;
 
 public class AppUser : IdentityUser<long>, IBaseEntity
 {

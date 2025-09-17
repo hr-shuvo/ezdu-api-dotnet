@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 using Core.DTOs.Common;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Domain.Interfaces.Repositories;
+namespace Core.Repositories.Interfaces;
 
 public interface IBaseRepository<T> where T : IBaseEntity
 {

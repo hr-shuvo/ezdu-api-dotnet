@@ -207,21 +207,14 @@ public class EmailService : IEmailService
             // Send email using MailKit SmtpClient
             using var client = new SmtpClient();
             
-            // Connect to server
             await client.ConnectAsync(_emailSettings.Host, _emailSettings.Port, SecureSocketOptions.StartTls);
-            
-            // Authenticate
             await client.AuthenticateAsync(_emailSettings.Username, _emailSettings.Password);
             
-            // Send message
             var result = await client.SendAsync(mimeMessage);
             
             if(string.IsNullOrWhiteSpace(result))
                 throw new AppException("Failed to send email");
             
-            
-            
-            // Disconnect
             await client.DisconnectAsync(true);
             
             return true;

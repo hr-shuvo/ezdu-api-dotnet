@@ -1,6 +1,6 @@
 using System.Security.Claims;
+using Core.App.Entities.Identity;
 using Core.DTOs.Auth;
-using Core.Entities.Identity;
 using Core.Errors;
 using Core.Services.Interfaces;
 using Core.Shared.Models.Messaging;

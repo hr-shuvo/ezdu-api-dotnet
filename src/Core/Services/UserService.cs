@@ -1,6 +1,6 @@
-using Core.Entities.Identity;
+using Core.App.Entities.Identity;
+using Core.Repositories.Interfaces;
 using Core.Services.Interfaces;
-using Domain.Interfaces.Repositories;
 
 namespace Core.Services;
 

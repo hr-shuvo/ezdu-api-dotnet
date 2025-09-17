@@ -1,10 +1,9 @@
-using Core.App.Controllers;
 using Core.DTOs.Auth;
 using Core.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Api.Controllers;
+namespace Core.App.Controllers;
 
 public class AuthController : BaseApiController
 {

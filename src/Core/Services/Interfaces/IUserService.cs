@@ -1,4 +1,4 @@
-using Core.Entities.Identity;
+using Core.App.Entities.Identity;
 
 namespace Core.Services.Interfaces;
 

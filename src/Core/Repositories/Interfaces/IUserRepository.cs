@@ -1,6 +1,6 @@
-using Core.Entities.Identity;
+using Core.App.Entities.Identity;
 
-namespace Domain.Interfaces.Repositories;
+namespace Core.Repositories.Interfaces;
 
 public interface IUserRepository : IBaseRepository<AppUser>
 {

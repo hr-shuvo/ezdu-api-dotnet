@@ -1,5 +1,5 @@
-using Core.Entities.Identity;
-using Domain.Interfaces.Repositories;
+using Core.App.Entities.Identity;
+using Core.Repositories.Interfaces;
 using Infrastructure.Data;
 
 namespace Infrastructure.Repositories;
