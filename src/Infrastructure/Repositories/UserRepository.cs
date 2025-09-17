@@ -4,9 +4,9 @@ using Infrastructure.Data;
 
 namespace Infrastructure.Repositories;
 
-public class UserRepository : BaseRepository<AppUser>, IUserRepository
+public class UserRepository:  IUserRepository
 {
-    public UserRepository(AppDbContext context) : base(context)
+    public UserRepository(AppDbContext context)
     {
     }
 }

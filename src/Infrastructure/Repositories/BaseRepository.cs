@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using Core.App.DTOs.Common;
 using Core.DTOs.Common;
 using Core.Repositories.Interfaces;
 using Infrastructure.Data;
@@ -7,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Infrastructure.Repositories;
 
-public class BaseRepository<T> : IBaseRepository<T> where T : class, IBaseEntity
+public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
 {
     private readonly AppDbContext _context;
     protected readonly DbSet<T> DbSet;

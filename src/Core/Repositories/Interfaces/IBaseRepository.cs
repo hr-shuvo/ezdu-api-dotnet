@@ -1,10 +1,11 @@
 using System.Linq.Expressions;
+using Core.App.DTOs.Common;
 using Core.DTOs.Common;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Core.Repositories.Interfaces;
 
-public interface IBaseRepository<T> where T : IBaseEntity
+public interface IBaseRepository<T> where T : BaseEntity
 {
     Task<T> GetByIdAsync(long id);
     Task<T> GetAsync(Expression<Func<T, bool>> predicate = null);

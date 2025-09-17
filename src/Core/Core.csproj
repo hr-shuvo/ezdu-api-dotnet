@@ -9,7 +9,6 @@
     <ItemGroup>
       <Folder Include="App\Entities\" />
       <Folder Include="BackgroundServices\" />
-      <Folder Include="Enums\" />
       <Folder Include="Events\" />
       <Folder Include="Extensions\" />
       <Folder Include="Shared\Config\" />

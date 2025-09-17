@@ -1,6 +1,8 @@
-namespace Core.DTOs.Common;
+using Core.DTOs.Common;
 
-public class BaseEntity
+namespace Core.App.DTOs.Common;
+
+public class BaseEntity : IBaseEntity
 {
     public long Id { get; set; }
     

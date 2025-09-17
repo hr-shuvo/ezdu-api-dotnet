@@ -1,9 +1,10 @@
 using System.Linq.Expressions;
+using Core.App.DTOs.Common;
 using Core.DTOs.Common;
 
 namespace Core.Services.Interfaces;
 
-public interface IBaseService<TEntity> where TEntity : IBaseEntity
+public interface IBaseService<TEntity> where TEntity : BaseEntity
 {
     Task<TEntity> GetByIdAsync(long id);
     Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> predicate = null);
