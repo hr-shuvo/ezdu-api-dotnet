@@ -14,6 +14,7 @@ public interface IBaseService<TEntity> where TEntity : class, IBaseEntity
     Task<TEntity> AddAsync(TEntity entity);
     Task<TEntity> UpdateAsync(TEntity entity);
     Task<bool> DeleteAsync(long id);
+    Task<bool> PermanentDeleteAsync(long id);
     Task<bool> ExistsAsync(long id);
     Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> predicate = null);
     Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate = null);

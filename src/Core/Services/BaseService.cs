@@ -15,7 +15,7 @@ public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class,
     }
 
 
-    public async Task<TEntity> GetByIdAsync(long id)
+    public virtual async Task<TEntity> GetByIdAsync(long id)
     {
         return await _repository.GetByIdAsync(id);
     }
@@ -36,7 +36,7 @@ public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class,
         return await _repository.AddAsync(entity);
     }
 
-    public async Task<TEntity> UpdateAsync(TEntity entity)
+    public virtual async Task<TEntity> UpdateAsync(TEntity entity)
     {
         return await _repository.UpdateAsync(entity);
     }
@@ -44,6 +44,11 @@ public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class,
     public async Task<bool> DeleteAsync(long id)
     {
         return await _repository.DeleteAsync(id);
+    }
+
+    public Task<bool> PermanentDeleteAsync(long id)
+    {
+        return _repository.PermanentDeleteAsync(id);
     }
 
     public virtual async Task<bool> ExistsAsync(long id)

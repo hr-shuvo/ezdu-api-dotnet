@@ -15,6 +15,7 @@ public interface IBaseRepository<T> where T :class, IBaseEntity
     Task<T> AddAsync(T entity);
     Task<T> UpdateAsync(T entity);
     Task<bool> DeleteAsync(long id);
+    Task<bool> PermanentDeleteAsync(long id);
     Task<bool> ExistsAsync(long id);
     Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate = null);
     Task<int> CountAsync(Expression<Func<T, bool>> predicate = null);

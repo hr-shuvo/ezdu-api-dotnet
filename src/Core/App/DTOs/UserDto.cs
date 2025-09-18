@@ -11,6 +11,6 @@ public class UserDto
     public DateTime CreatedAt { get; set; }
     public DateTime LastActive { get; set; }
 
-    public string Status { get; set; }
+    public int Status { get; set; }
     
 }

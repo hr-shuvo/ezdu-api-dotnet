@@ -85,6 +85,16 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class, IBaseEntity
         return false;
     }
 
+    public async Task<bool> PermanentDeleteAsync(long id)
+    {
+        var entity = await GetByIdAsync(id);
+        if (entity == null) return false;
+        
+        DbSet.Remove(entity);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
     public async Task<bool> ExistsAsync(long id)
     {
         return await DbSet.AnyAsync(x => x.Id == id && x.Status != Status.Deleted);
