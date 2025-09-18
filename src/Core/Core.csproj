@@ -12,7 +12,6 @@
       <Folder Include="Events\" />
       <Folder Include="Extensions\" />
       <Folder Include="Shared\Config\" />
-      <Folder Include="Shared\Models\Pagination\" />
       <Folder Include="Shared\Models\Response\" />
       <Folder Include="Shared\Provider\" />
       <Folder Include="Shared\templates\" />

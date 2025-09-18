@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 using Core.App.DTOs.Common;
-using Core.DTOs.Common;
+using Core.App.Models;
 using Core.Repositories.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Infrastructure.Repositories;
 
-public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
+public class BaseRepository<T> : IBaseRepository<T> where T : class, IBaseEntity
 {
     private readonly AppDbContext _context;
     protected readonly DbSet<T> DbSet;
@@ -22,12 +22,12 @@ public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
 
     public async Task<T> GetByIdAsync(long id)
     {
-        return await DbSet.FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted);
+        return await DbSet.FirstOrDefaultAsync(x => x.Id == id && x.Status != Status.Deleted);
     }
 
     public async Task<T> GetAsync(Expression<Func<T, bool>> predicate = null)
     {
-        var query = DbSet.Where(x => !x.IsDeleted);
+        var query = DbSet.Where(x => x.Status != Status.Deleted);
 
         if (predicate != null)
             query = query.Where(predicate);
@@ -36,17 +36,21 @@ public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
             .FirstOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<T>> LoadAsync(int page, int size, Expression<Func<T, bool>> predicate = null)
+    public async Task<(int, IEnumerable<T>)> LoadAsync(int page, int size, Expression<Func<T, bool>> predicate = null)
     {
-        var query = DbSet.Where(x => !x.IsDeleted);
+        var query = DbSet.Where(x => x.Status != Status.Deleted);
 
         if (predicate != null)
             query = query.Where(predicate);
 
-        return await query
+        var count = await query.CountAsync();
+        
+        var result =  await query
             .Skip((page - 1) * size)
             .Take(size)
             .ToListAsync();
+        
+        return (count, result);
     }
 
     public async Task<T> AddAsync(T entity)
@@ -72,7 +76,7 @@ public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
         var entity = await GetByIdAsync(id);
         if (entity != null)
         {
-            entity.IsDeleted = true;
+            entity.Status = Status.Deleted;
             entity.UpdatedAt = DateTime.UtcNow;
             
             await _context.SaveChangesAsync();
@@ -83,12 +87,12 @@ public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
 
     public async Task<bool> ExistsAsync(long id)
     {
-        return await DbSet.AnyAsync(x => x.Id == id && !x.IsDeleted);
+        return await DbSet.AnyAsync(x => x.Id == id && x.Status != Status.Deleted);
     }
 
     public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate = null)
     {
-        var query = DbSet.Where(x => !x.IsDeleted);
+        var query = DbSet.Where(x => x.Status != Status.Deleted);
 
         if (predicate != null)
         {
@@ -100,7 +104,7 @@ public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
 
     public async Task<int> CountAsync(Expression<Func<T, bool>> predicate = null)
     {
-        var query = DbSet.Where(x => !x.IsDeleted);
+        var query = DbSet.Where(x => x.Status != Status.Deleted);
         if (predicate != null)
             query = query.Where(predicate);
         

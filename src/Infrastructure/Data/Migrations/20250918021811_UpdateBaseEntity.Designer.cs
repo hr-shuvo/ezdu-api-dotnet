@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250918021811_UpdateBaseEntity")]
+    partial class UpdateBaseEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -178,7 +181,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("SubjectId");
 
-                    b.ToTable("Assignment", (string)null);
+                    b.ToTable("Assignment");
                 });
 
             modelBuilder.Entity("Core.Entities.Class", b =>
@@ -220,7 +223,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Class", (string)null);
+                    b.ToTable("Class");
                 });
 
             modelBuilder.Entity("Core.Entities.Lesson", b =>
@@ -274,7 +277,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("SubjectId");
 
-                    b.ToTable("Lesson", (string)null);
+                    b.ToTable("Lesson");
                 });
 
             modelBuilder.Entity("Core.Entities.Question", b =>
@@ -381,7 +384,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("TopicId");
 
-                    b.ToTable("Question", (string)null);
+                    b.ToTable("Question");
                 });
 
             modelBuilder.Entity("Core.Entities.Quiz", b =>
@@ -428,7 +431,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Quiz", (string)null);
+                    b.ToTable("Quiz");
                 });
 
             modelBuilder.Entity("Core.Entities.Subject", b =>
@@ -485,7 +488,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Subject", (string)null);
+                    b.ToTable("Subject");
                 });
 
             modelBuilder.Entity("Core.Entities.Topic", b =>
@@ -533,7 +536,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("SubjectId");
 
-                    b.ToTable("Topic", (string)null);
+                    b.ToTable("Topic");
                 });
 
             modelBuilder.Entity("Core.Entities.TopicContent", b =>
@@ -583,7 +586,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("TopicId");
 
-                    b.ToTable("TopicContent", (string)null);
+                    b.ToTable("TopicContent");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>

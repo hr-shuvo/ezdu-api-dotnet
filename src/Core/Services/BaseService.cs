@@ -1,12 +1,11 @@
 using System.Linq.Expressions;
 using Core.App.DTOs.Common;
-using Core.DTOs.Common;
 using Core.Repositories.Interfaces;
 using Core.Services.Interfaces;
 
 namespace Core.Services;
 
-public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : BaseEntity
+public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class, IBaseEntity
 {
     private readonly IBaseRepository<TEntity> _repository;
 
@@ -14,8 +13,7 @@ public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : BaseEn
     {
         _repository = repository;
     }
-    
-    
+
 
     public async Task<TEntity> GetByIdAsync(long id)
     {
@@ -27,7 +25,8 @@ public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : BaseEn
         return await _repository.GetAsync(predicate);
     }
 
-    public async Task<IEnumerable<TEntity>> LoadAsync(int page, int size, Expression<Func<TEntity, bool>>? predicate)
+    public async Task<(int, IEnumerable<TEntity>)> LoadAsync(int page, int size,
+        Expression<Func<TEntity, bool>> predicate)
     {
         return await _repository.LoadAsync(page, size, predicate);
     }

@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Core.App.DTOs.Auth;
 using Core.DTOs.Auth;
 
 namespace Core.Services.Interfaces;

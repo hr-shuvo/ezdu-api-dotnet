@@ -1,4 +1,4 @@
-namespace Core.DTOs.Common;
+namespace Core.App.DTOs.Common;
 
 public interface IBaseEntity
 {
@@ -7,7 +7,7 @@ public interface IBaseEntity
     DateTime CreatedAt { get; set; }
     DateTime UpdatedAt { get; set; }
     
-    bool IsDeleted { get; set; }
+    int Status { get; set; }
     
     long? CreatedBy { get; set; }
     long? UpdatedBy { get; set; }

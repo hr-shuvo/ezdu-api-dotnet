@@ -1,4 +1,4 @@
-using Core.DTOs.Common;
+using Core.App.DTOs.Common;
 using Microsoft.AspNetCore.Identity;
 
 namespace Core.App.Entities.Identity;
@@ -7,7 +7,9 @@ public class AppUser : IdentityUser<long>, IBaseEntity
 {
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; }
-    public bool IsDeleted { get; set; }
+    
+    public int Status { get; set; } = Models.Status.Active;
+    
     public long? CreatedBy { get; set; }
     public long? UpdatedBy { get; set; }
 }

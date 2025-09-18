@@ -358,3 +358,7 @@ out/
 # SSL
 **/ssl
 
+
+src/Api/appsettings.Development.json
+
+src/Api/appsettings.json

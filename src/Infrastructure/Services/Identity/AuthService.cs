@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Core.App.DTOs.Auth;
 using Core.App.Entities.Identity;
 using Core.DTOs.Auth;
 using Core.Errors;

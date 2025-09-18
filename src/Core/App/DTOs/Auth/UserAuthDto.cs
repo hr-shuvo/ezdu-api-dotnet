@@ -1,4 +1,4 @@
-namespace Core.DTOs.Auth;
+namespace Core.App.DTOs.Auth;
 
 public class UserAuthDto
 {
