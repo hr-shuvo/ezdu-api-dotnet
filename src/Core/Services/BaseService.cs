@@ -15,14 +15,14 @@ public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class,
     }
 
 
-    public virtual async Task<TEntity> GetByIdAsync(long id)
+    public virtual async Task<TEntity> GetByIdAsync(long id, bool withDeleted = false)
     {
-        return await _repository.GetByIdAsync(id);
+        return await _repository.GetByIdAsync(id, withDeleted);
     }
 
-    public async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> predicate)
+    public async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> predicate, bool withDeleted = false)
     {
-        return await _repository.GetAsync(predicate);
+        return await _repository.GetAsync(predicate, withDeleted);
     }
 
     public async Task<(int, IEnumerable<TEntity>)> LoadAsync(int page, int size,
@@ -41,7 +41,7 @@ public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class,
         return await _repository.UpdateAsync(entity);
     }
 
-    public async Task<bool> DeleteAsync(long id)
+    public async Task<bool> SoftDeleteAsync(long id)
     {
         return await _repository.DeleteAsync(id);
     }

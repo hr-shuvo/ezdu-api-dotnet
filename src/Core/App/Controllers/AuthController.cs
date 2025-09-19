@@ -1,5 +1,4 @@
 using Core.App.DTOs.Auth;
-using Core.DTOs.Auth;
 using Core.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -49,6 +48,16 @@ public class AuthController : BaseApiController
         
         
         return Ok(user);
-        
     }
+    
+    
+    [HttpPost("send-otp")]
+    public async Task<IActionResult> SendOtp([FromBody] SendOtpDto request)
+    {
+        await _authService.SendOtpAsync(request);
+        return Ok();
+    }
+    
+    
+    
 }

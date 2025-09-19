@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using Core.App.DTOs.Auth;
 using Core.App.Entities.Identity;
-using Core.DTOs.Auth;
+using Core.App.Utils;
 using Core.Errors;
 using Core.Services.Interfaces;
 using Core.Shared.Models.Messaging;
@@ -71,7 +71,7 @@ public class AuthService : IAuthService
                         $"Best regards,\nYour Company",
                     IsHtml = true,
                 };
-                
+
                 bool emailSent = await _emailService.SendLoginNotificationEmailAsync(user.Email, user.UserName);
                 if (!emailSent)
                 {
@@ -201,6 +201,90 @@ public class AuthService : IAuthService
         }
     }
 
+    public async Task<bool> SendOtpAsync(SendOtpDto request)
+    {
+        try
+        {
+            AppUser user;
+
+            if (request.IsPhone)
+            {
+                var recipient = NormalizeHelper.NormalizePhoneNumber(request.Recipient);
+
+                user = await _userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == recipient);
+            }
+            else
+            {
+                user = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == request.Recipient);
+            }
+
+            if (user == null)
+            {
+                throw new AppException(404, "No account associated with the provided recipient");
+            }
+
+            var userToken = await _tokenService.GetAsync(x =>
+                x.ExpireAt > DateTime.UtcNow &&
+                x.UserId == user.Id, withDeleted: true);
+
+            if (userToken is null)
+            {
+                // await _tokenService.DeleteAllByUserIdAsync(user.Id); // todo: implement later to delete many
+                var tokenToDelete = await _tokenService.GetAsync(x => x.UserId == user.Id, withDeleted: true);
+                if (tokenToDelete != null)
+                {
+                    await _tokenService.PermanentDeleteAsync(tokenToDelete.Id);
+                }
+
+                var loginCode = Helper.GenerateLoginCode(4);
+                var encryptedCode = _tokenService.EncryptCode(loginCode);
+
+                userToken = new AuthToken
+                {
+                    UserId = user.Id,
+                    LoginToken = encryptedCode,
+                    CreatedAt = DateTime.UtcNow,
+                    ExpireAt = DateTime.UtcNow.AddMinutes(5)
+                };
+
+                userToken = await _tokenService.AddAsync(userToken);
+            }
+
+            var code = userToken.LoginToken;
+            var decryptedCode = _tokenService.DecryptCode(code);
+
+
+            if (request.IsPhone)
+            {
+                // Send SMS
+            }
+            else
+            {
+                // Send Email
+
+                var emailMessage = new EmailMessage
+                {
+                    To = user.Email,
+                    ToName = user.UserName,
+                    Subject = "Your Login Code",
+                    Body = $"Your login code is: {decryptedCode}",
+                    IsHtml = false
+                };
+
+                var emailSent = await _emailService.SendEmailAsync(emailMessage);
+
+                return emailSent;
+            }
+
+            return false;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error sending login code to {Recipient}", request.Recipient);
+            throw;
+        }
+    }
+
 
     #region Private Methods
 
@@ -210,7 +294,7 @@ public class AuthService : IAuthService
         {
             Username = user.UserName,
             Name = user.UserName, // todo: add full name property
-            Token = _tokenService.CreateToken(user)
+            Token = _tokenService.CreateAuthToken(user)
         };
 
         return userDto;

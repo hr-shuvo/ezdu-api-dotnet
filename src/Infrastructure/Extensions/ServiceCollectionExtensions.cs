@@ -21,20 +21,18 @@ public static class ServiceCollectionExtensions
         services.AddConfigureServices(configuration);
 
         #region DI
+        services.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
+        services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 
+        
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddSingleton<IEmailService, EmailService>();
+        
 
 
-
-
-
-
-
-
-
+        services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
         services.AddScoped<IUserRepository, UserRepository>();
 
         #endregion

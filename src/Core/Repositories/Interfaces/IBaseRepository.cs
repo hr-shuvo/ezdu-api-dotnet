@@ -6,9 +6,8 @@ namespace Core.Repositories.Interfaces;
 
 public interface IBaseRepository<T> where T :class, IBaseEntity
 {
-    Task<T> GetByIdAsync(long id);
-
-    Task<T> GetAsync(Expression<Func<T, bool>> predicate = null);
+    Task<T> GetByIdAsync(long id, bool withDeleted = false);
+    Task<T> GetAsync(Expression<Func<T, bool>> predicate = null, bool withDeleted=false);
 
     // Task<IEnumerable<T>> LoadAsync(int page, int size, Expression<Func<T, bool>> predicate = null);
     Task<(int Count, IEnumerable<T> Items)> LoadAsync(int page, int size, Expression<Func<T, bool>> predicate = null);

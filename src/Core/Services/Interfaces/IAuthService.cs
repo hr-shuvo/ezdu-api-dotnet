@@ -1,6 +1,5 @@
 using System.Security.Claims;
 using Core.App.DTOs.Auth;
-using Core.DTOs.Auth;
 
 namespace Core.Services.Interfaces;
 
@@ -11,4 +10,6 @@ public interface IAuthService
     
     Task<bool> ExistsByEmailAsync(string email);
     Task<UserAuthDto> GetCurrentUser(ClaimsPrincipal httpContextUser);
+    
+    Task<bool> SendOtpAsync(SendOtpDto request);
 }

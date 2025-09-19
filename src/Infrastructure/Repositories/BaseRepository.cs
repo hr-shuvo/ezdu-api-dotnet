@@ -20,14 +20,23 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class, IBaseEntity
     }
 
 
-    public async Task<T> GetByIdAsync(long id)
+    public async Task<T> GetByIdAsync(long id, bool withDeleted = false)
     {
-        return await DbSet.FirstOrDefaultAsync(x => x.Id == id && x.Status != Status.Deleted);
+        var query = DbSet.AsQueryable();
+        if (!withDeleted)
+            query = query.Where(x => x.Status != Status.Deleted);
+
+        query = query.Where(x => x.Id == id);
+
+        return await query.FirstOrDefaultAsync();
     }
 
-    public async Task<T> GetAsync(Expression<Func<T, bool>> predicate = null)
+    public async Task<T> GetAsync(Expression<Func<T, bool>> predicate = null, bool withDeleted = false)
     {
-        var query = DbSet.Where(x => x.Status != Status.Deleted);
+        var query = DbSet.AsQueryable();
+        
+        if (!withDeleted)
+            query = query.Where(x => x.Status != Status.Deleted);
 
         if (predicate != null)
             query = query.Where(predicate);
@@ -44,12 +53,12 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class, IBaseEntity
             query = query.Where(predicate);
 
         var count = await query.CountAsync();
-        
-        var result =  await query
+
+        var result = await query
             .Skip((page - 1) * size)
             .Take(size)
             .ToListAsync();
-        
+
         return (count, result);
     }
 
@@ -57,7 +66,7 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class, IBaseEntity
     {
         entity.CreatedAt = DateTime.UtcNow;
         DbSet.Add(entity);
-        
+
         await _context.SaveChangesAsync();
         return entity;
     }
@@ -66,7 +75,7 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class, IBaseEntity
     {
         entity.UpdatedAt = DateTime.UtcNow;
         _context.Entry(entity).State = EntityState.Modified;
-        
+
         await _context.SaveChangesAsync();
         return entity;
     }
@@ -78,10 +87,11 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class, IBaseEntity
         {
             entity.Status = Status.Deleted;
             entity.UpdatedAt = DateTime.UtcNow;
-            
+
             await _context.SaveChangesAsync();
             return true;
         }
+
         return false;
     }
 
@@ -89,7 +99,7 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class, IBaseEntity
     {
         var entity = await GetByIdAsync(id);
         if (entity == null) return false;
-        
+
         DbSet.Remove(entity);
         await _context.SaveChangesAsync();
         return true;
@@ -117,13 +127,13 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class, IBaseEntity
         var query = DbSet.Where(x => x.Status != Status.Deleted);
         if (predicate != null)
             query = query.Where(predicate);
-        
+
         return await query.CountAsync();
     }
 
     public IDbContextTransaction BeginTransaction()
     {
-        return _context.Database.BeginTransaction();  
+        return _context.Database.BeginTransaction();
     }
 
     public void RefreshEntity(T entity)
