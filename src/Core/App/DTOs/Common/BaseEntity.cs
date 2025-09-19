@@ -11,10 +11,5 @@ public class BaseEntity : IBaseEntity
 
     public long? CreatedBy { get; set; }
     public long? UpdatedBy { get; set; }
-
-    public void SoftDelete()
-    {
-        Status = Models.Status.Deleted;
-        UpdatedAt = DateTime.UtcNow;
-    }
+    
 }

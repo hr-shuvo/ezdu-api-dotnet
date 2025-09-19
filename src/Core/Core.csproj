@@ -7,7 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="App\Entities\" />
       <Folder Include="BackgroundServices\" />
       <Folder Include="Events\" />
       <Folder Include="Shared\Config\" />

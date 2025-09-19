@@ -14,7 +14,7 @@ public class ClassConfiguration : IEntityTypeConfiguration<Class>
         builder.Property(x => x.Title).IsRequired().HasMaxLength(100);
         
         builder.Property(x => x.Segment).IsRequired();
-        builder.Property(x => x.Groups).IsRequired().HasMaxLength(200);
+        builder.Property(x => x.Groups).HasMaxLength(200);
     }
 }
 

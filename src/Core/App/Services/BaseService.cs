@@ -25,8 +25,8 @@ public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class,
         return await _repository.GetAsync(predicate, withDeleted);
     }
 
-    public async Task<(int, IEnumerable<TEntity>)> LoadAsync(int page, int size,
-        Expression<Func<TEntity, bool>> predicate)
+    public async Task<(int, IEnumerable<TEntity>)> LoadAsync(int page = 1, int size = 10,
+        Expression<Func<TEntity, bool>> predicate = null)
     {
         return await _repository.LoadAsync(page, size, predicate);
     }
