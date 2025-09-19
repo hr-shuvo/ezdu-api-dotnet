@@ -37,6 +37,8 @@ public class AuthService : IAuthService
     }
 
 
+    #region Auth Methods
+
     public async Task<UserAuthDto> LoginAsync(LoginDto loginDto)
     {
         try
@@ -201,6 +203,11 @@ public class AuthService : IAuthService
         }
     }
 
+    #endregion
+
+
+    #region OPT Methods
+
     public async Task<string> SendOtpAsync(SendOtpDto request)
     {
         try
@@ -245,7 +252,7 @@ public class AuthService : IAuthService
                         CreatedAt = DateTime.UtcNow,
                         ExpireAt = DateTime.UtcNow.AddMinutes(5)
                     };
-                    
+
                     userValidToken = await _tokenService.AddAsync(userValidToken);
                 }
                 else
@@ -253,7 +260,7 @@ public class AuthService : IAuthService
                     userToken.ExpireAt = DateTime.UtcNow.AddMinutes(5);
                     userToken.CreatedAt = DateTime.UtcNow;
                     userToken.LoginToken = encryptedCode;
-                    
+
                     userValidToken = await _tokenService.UpdateAsync(userToken);
                 }
             }
@@ -265,16 +272,16 @@ public class AuthService : IAuthService
             if (request.IsPhone)
             {
                 // Send SMS
-                
+
                 var smsMessage = new SmsMessage
                 {
                     To = user.PhoneNumber,
                     Body = $"Your login code is: {decryptedCode}"
                 };
-                
-                
+
+
                 return $"Code sent to {request.Recipient} successfully";
-                
+
                 throw new AppException(400, "Failed to send email. Please try again later.");
             }
             else
@@ -292,13 +299,11 @@ public class AuthService : IAuthService
 
                 var emailSent = await _emailService.SendEmailAsync(emailMessage);
 
-                if(emailSent)
+                if (emailSent)
                     return $"Code sent to {request.Recipient} successfully";
-                
+
                 throw new AppException(400, "Failed to send email. Please try again later.");
             }
-            
-
         }
         catch (Exception ex)
         {
@@ -306,6 +311,74 @@ public class AuthService : IAuthService
             throw;
         }
     }
+
+    public async Task<string> VerifyOtpAsync(VerifyCodeDto request)
+    {
+        try
+        {
+            AppUser user;
+
+            if (Helper.IsValidEmail(request.Recipient))
+            {
+                user = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == request.Recipient);
+            }
+            else
+            {
+                var recipient = NormalizeHelper.NormalizePhoneNumber(request.Recipient);
+                user = await _userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == recipient);
+            }
+
+            if (user == null)
+            {
+                throw new AppException(404, "No account associated with the provided recipient");
+            }
+
+            if (user.EmailConfirmed && Helper.IsValidEmail(request.Recipient) && user.Email == request.Recipient)
+                throw new AppException(400, "Email already verified");
+
+            if (user.PhoneNumberConfirmed && !Helper.IsValidEmail(request.Recipient) &&
+                user.PhoneNumber == request.Recipient)
+                throw new AppException(400, "Phone number already verified");
+
+            var userToken = await _tokenService.GetAsync(x =>
+                x.ExpireAt > DateTime.UtcNow);
+
+            if (userToken is null)
+            {
+                throw new AppException(400, "Invalid or expired code");
+            }
+
+            var decryptedCode = _tokenService.DecryptCode(userToken.LoginToken);
+            if (decryptedCode != request.Code)
+            {
+                throw new AppException(400, "Invalid code");
+            }
+
+            if (Helper.IsValidEmail(request.Recipient) && user.Email == request.Recipient)
+            {
+                user.EmailConfirmed = true;
+            }
+            else if (!Helper.IsValidEmail(request.Recipient) && user.PhoneNumber == request.Recipient)
+            {
+                user.PhoneNumberConfirmed = true;
+            }
+            else
+            {
+                throw new AppException(400, "Recipient does not match user");
+            }
+
+            await _userManager.UpdateAsync(user);
+
+            return "Code verified successfully";
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error verifying login code: {Code}", request.Code);
+            throw;
+        }
+    }
+
+    #endregion
 
 
     #region Private Methods

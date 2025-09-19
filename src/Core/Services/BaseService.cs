@@ -56,12 +56,12 @@ public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class,
         return await _repository.ExistsAsync(id);
     }
 
-    public async Task<bool> ExistsAsync(Expression<Func<TEntity, bool>>? predicate)
+    public async Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> predicate)
     {
         return await _repository.ExistsAsync(predicate);
     }
 
-    public async Task<int> CountAsync(Expression<Func<TEntity, bool>>? predicate)
+    public async Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate)
     {
         return await _repository.CountAsync(predicate);
     }

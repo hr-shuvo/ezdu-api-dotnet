@@ -12,4 +12,5 @@ public interface IAuthService
     Task<UserAuthDto> GetCurrentUser(ClaimsPrincipal httpContextUser);
     
     Task<string> SendOtpAsync(SendOtpDto request);
+    Task<string> VerifyOtpAsync(VerifyCodeDto request);
 }

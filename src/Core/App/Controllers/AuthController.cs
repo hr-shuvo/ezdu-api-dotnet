@@ -62,6 +62,16 @@ public class AuthController : BaseApiController
         return Ok(res);
     }
     
+    [HttpPost("verify-otp")]
+    public async Task<IActionResult> VerifyOtp([FromBody] VerifyCodeDto request)
+    {
+         var result = await _authService.VerifyOtpAsync(request);
+
+         var res = new ApiResponse(200, result);
+        
+        return Ok(res);
+    }
+    
     
     
 }
