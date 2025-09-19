@@ -151,6 +151,20 @@ public class QuestionConfiguration : IEntityTypeConfiguration<Question>
     }
 }
 
+public class AchievementConfiguration : IEntityTypeConfiguration<Achievement>
+{
+    public void Configure(EntityTypeBuilder<Achievement> builder)
+    {
+        builder.HasKey(x => x.Id);
+        
+        // todo: add other properties
+        // builder.Property(x => x.Title).IsRequired().HasMaxLength(250);
+        // builder.Property(x => x.Description).HasMaxLength(1000);
+        // builder.Property(x => x.IconUrl).HasMaxLength(500);
+        // builder.Property(x => x.Criteria).HasMaxLength(1000);
+    }
+}
+
 public class AssignmentConfiguration : IEntityTypeConfiguration<Assignment>
 {
     public void Configure(EntityTypeBuilder<Assignment> builder)

@@ -2,7 +2,7 @@ using Core.App.DTOs.Common;
 
 namespace Core.Entities;
 
-public class Progress: BaseEntity
+public class Achievement : BaseEntity
 {
     
 }
