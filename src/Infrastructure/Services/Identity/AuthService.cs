@@ -72,7 +72,7 @@ public class AuthService : IAuthService
                     IsHtml = true,
                 };
 
-                bool emailSent = await _emailService.SendLoginNotificationEmailAsync(user.Email, user.UserName);
+                bool emailSent = await _emailService.SendEmailAsync(message);
                 if (!emailSent)
                 {
                     _logger.LogWarning("Failed to send login notification email to {Email}", user.Email);
@@ -201,7 +201,7 @@ public class AuthService : IAuthService
         }
     }
 
-    public async Task<bool> SendOtpAsync(SendOtpDto request)
+    public async Task<string> SendOtpAsync(SendOtpDto request)
     {
         try
         {
@@ -223,40 +223,59 @@ public class AuthService : IAuthService
                 throw new AppException(404, "No account associated with the provided recipient");
             }
 
-            var userToken = await _tokenService.GetAsync(x =>
+            var userValidToken = await _tokenService.GetAsync(x =>
                 x.ExpireAt > DateTime.UtcNow &&
                 x.UserId == user.Id, withDeleted: true);
 
-            if (userToken is null)
+            if (userValidToken is null)
             {
-                // await _tokenService.DeleteAllByUserIdAsync(user.Id); // todo: implement later to delete many
-                var tokenToDelete = await _tokenService.GetAsync(x => x.UserId == user.Id, withDeleted: true);
-                if (tokenToDelete != null)
-                {
-                    await _tokenService.PermanentDeleteAsync(tokenToDelete.Id);
-                }
+                // await _tokenService.DeleteAllByUserIdAsync(user.Id);
+                var userToken = await _tokenService.GetAsync(x =>
+                    x.UserId == user.Id, withDeleted: true);
 
                 var loginCode = Helper.GenerateLoginCode(4);
                 var encryptedCode = _tokenService.EncryptCode(loginCode);
 
-                userToken = new AuthToken
+                if (userToken is null)
                 {
-                    UserId = user.Id,
-                    LoginToken = encryptedCode,
-                    CreatedAt = DateTime.UtcNow,
-                    ExpireAt = DateTime.UtcNow.AddMinutes(5)
-                };
-
-                userToken = await _tokenService.AddAsync(userToken);
+                    userValidToken = new AuthToken
+                    {
+                        UserId = user.Id,
+                        LoginToken = encryptedCode,
+                        CreatedAt = DateTime.UtcNow,
+                        ExpireAt = DateTime.UtcNow.AddMinutes(5)
+                    };
+                    
+                    userValidToken = await _tokenService.AddAsync(userValidToken);
+                }
+                else
+                {
+                    userToken.ExpireAt = DateTime.UtcNow.AddMinutes(5);
+                    userToken.CreatedAt = DateTime.UtcNow;
+                    userToken.LoginToken = encryptedCode;
+                    
+                    userValidToken = await _tokenService.UpdateAsync(userToken);
+                }
             }
 
-            var code = userToken.LoginToken;
+            var code = userValidToken.LoginToken;
             var decryptedCode = _tokenService.DecryptCode(code);
 
 
             if (request.IsPhone)
             {
                 // Send SMS
+                
+                var smsMessage = new SmsMessage
+                {
+                    To = user.PhoneNumber,
+                    Body = $"Your login code is: {decryptedCode}"
+                };
+                
+                
+                return $"Code sent to {request.Recipient} successfully";
+                
+                throw new AppException(400, "Failed to send email. Please try again later.");
             }
             else
             {
@@ -273,10 +292,13 @@ public class AuthService : IAuthService
 
                 var emailSent = await _emailService.SendEmailAsync(emailMessage);
 
-                return emailSent;
+                if(emailSent)
+                    return $"Code sent to {request.Recipient} successfully";
+                
+                throw new AppException(400, "Failed to send email. Please try again later.");
             }
+            
 
-            return false;
         }
         catch (Exception ex)
         {

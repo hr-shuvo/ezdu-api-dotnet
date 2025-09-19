@@ -11,5 +11,5 @@ public interface IAuthService
     Task<bool> ExistsByEmailAsync(string email);
     Task<UserAuthDto> GetCurrentUser(ClaimsPrincipal httpContextUser);
     
-    Task<bool> SendOtpAsync(SendOtpDto request);
+    Task<string> SendOtpAsync(SendOtpDto request);
 }

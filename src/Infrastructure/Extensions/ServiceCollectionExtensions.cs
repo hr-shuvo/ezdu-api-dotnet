@@ -34,6 +34,7 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<ITokenRepository, TokenRepository>();
 
         #endregion
 

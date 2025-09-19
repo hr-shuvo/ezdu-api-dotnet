@@ -13,14 +13,18 @@ namespace Infrastructure.Services.Identity;
 
 public class TokenService : BaseService<AuthToken>, ITokenService
 {
+    private readonly ITokenRepository _repository;
+    
     private readonly IConfiguration _config;
     private readonly SymmetricSecurityKey _key;
 
     private readonly string _encKey;
     private readonly string _encSalt;
 
-    public TokenService(IConfiguration config, IBaseRepository<AuthToken> repo) : base(repo)
+    public TokenService(IConfiguration config, ITokenRepository repo) : base(repo)
     {
+        _repository = repo;
+        
         _config = config;
         _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Token:Key"]!));
 
@@ -54,6 +58,13 @@ public class TokenService : BaseService<AuthToken>, ITokenService
         var token = tokenHandler.CreateToken(tokenDescriptor);
 
         return tokenHandler.WriteToken(token);
+    }
+    
+    
+    
+    public async Task<bool> DeleteAllByUserIdAsync(long userId)
+    {
+        return await _repository.DeleteAllByUserIdAsync(userId);
     }
 
 
