@@ -6,8 +6,8 @@ namespace Core.App.Repositories.Interfaces;
 
 public interface IBaseRepository<T> where T :class, IBaseEntity
 {
-    Task<T> GetByIdAsync(long id, bool withDeleted = false);
-    Task<T> GetAsync(Expression<Func<T, bool>> predicate = null, bool withDeleted=false);
+    Task<T> GetByIdAsync(long id, bool asTracking = false, bool withDeleted = false);
+    Task<T> GetAsync(Expression<Func<T, bool>> predicate = null, bool asTracking = false, bool withDeleted=false);
 
     // Task<IEnumerable<T>> LoadAsync(int page, int size, Expression<Func<T, bool>> predicate = null);
     Task<(int Count, IEnumerable<T> Items)> LoadAsync(int page, int size, Expression<Func<T, bool>> predicate = null);
@@ -15,8 +15,8 @@ public interface IBaseRepository<T> where T :class, IBaseEntity
     Task<T> UpdateAsync(T entity);
     Task<bool> DeleteAsync(long id);
     Task<bool> PermanentDeleteAsync(long id);
-    Task<bool> ExistsAsync(long id);
-    Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate = null);
+    Task<bool> ExistsAsync(long id, bool withDeleted = false);
+    Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate = null, bool withDeleted = false);
     Task<int> CountAsync(Expression<Func<T, bool>> predicate = null);
 
     IDbContextTransaction BeginTransaction();

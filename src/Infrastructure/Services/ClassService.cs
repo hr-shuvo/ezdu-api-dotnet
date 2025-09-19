@@ -3,8 +3,10 @@ using Core.DTOs;
 using Core.Entities;
 using Core.Enums;
 using Core.Errors;
+using Core.QueryParams;
 using Core.Repositories;
 using Core.Services;
+using Core.Shared.Models.Pagination;
 
 namespace Infrastructure.Services;
 
@@ -17,20 +19,42 @@ public class ClassService : BaseService<Class>, IClassService
         _classRepository = repository;
     }
 
+    public async Task<PagedList<Class>> LoadAsync(ClassParams query)
+    {
+        var result = await _classRepository.LoadAsync(query);
+        
+        return new PagedList<Class>(result.Items, result.Count, query.PageNumber, query.PageSize);
+    }
+
     public async Task<ApiResponse> SaveAsync(ClassDto classDto)
     {
+        bool duplicateTitle;
+        
         if (classDto.Id > 0)
         {
             var existingEntity = await _classRepository.GetByIdAsync(classDto.Id);
 
             if (existingEntity is null)
                 throw new AppException(404, "Class not found");
-            
+
+            if (existingEntity.Title != classDto.Title)
+            {
+                duplicateTitle = await _classRepository.ExistsAsync(x => x.Title == classDto.Title);
+
+                if (duplicateTitle)
+                    throw new AppException(400, "A class with this title already exists");
+            }
+
             MapDtoToEntity(classDto, existingEntity);
 
             await _classRepository.UpdateAsync(existingEntity);
             return new ApiResponse(200, "Class updated successfully");
         }
+
+        duplicateTitle = await _classRepository.ExistsAsync(x => x.Title == classDto.Title);
+
+        if (duplicateTitle)
+            throw new AppException(400, "A class with this title already exists");
 
         var newEntity = MapDtoToEntity(classDto);
         await _classRepository.AddAsync(newEntity);

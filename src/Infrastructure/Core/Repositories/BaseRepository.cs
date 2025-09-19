@@ -20,9 +20,10 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class, IBaseEntity
     }
 
 
-    public async Task<T> GetByIdAsync(long id, bool withDeleted = false)
+    public async Task<T> GetByIdAsync(long id, bool asTracking = false, bool withDeleted = false)
     {
-        var query = DbSet.AsQueryable();
+        var query = asTracking ? DbSet.AsQueryable() : DbSet.AsNoTracking();
+
         if (!withDeleted)
             query = query.Where(x => x.Status != Status.Deleted);
 
@@ -31,10 +32,11 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class, IBaseEntity
         return await query.FirstOrDefaultAsync();
     }
 
-    public async Task<T> GetAsync(Expression<Func<T, bool>> predicate = null, bool withDeleted = false)
+    public async Task<T> GetAsync(Expression<Func<T, bool>> predicate = null, bool asTracking = false,
+        bool withDeleted = false)
     {
-        var query = DbSet.AsQueryable();
-        
+        var query = asTracking ? DbSet.AsQueryable() : DbSet.AsNoTracking();
+
         if (!withDeleted)
             query = query.Where(x => x.Status != Status.Deleted);
 
@@ -82,7 +84,7 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class, IBaseEntity
 
     public async Task<bool> DeleteAsync(long id)
     {
-        var entity = await GetByIdAsync(id);
+        var entity = await GetByIdAsync(id, asTracking: true);
         if (entity != null)
         {
             entity.Status = Status.Deleted;
@@ -97,7 +99,7 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class, IBaseEntity
 
     public async Task<bool> PermanentDeleteAsync(long id)
     {
-        var entity = await GetByIdAsync(id);
+        var entity = await GetByIdAsync(id, asTracking: true, withDeleted: true);
         if (entity == null) return false;
 
         DbSet.Remove(entity);
@@ -105,14 +107,22 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class, IBaseEntity
         return true;
     }
 
-    public async Task<bool> ExistsAsync(long id)
+    public async Task<bool> ExistsAsync(long id, bool withDeleted = false)
     {
-        return await DbSet.AnyAsync(x => x.Id == id && x.Status != Status.Deleted);
+        var query = DbSet.AsNoTracking();
+
+        if (!withDeleted)
+            query = query.Where(x => x.Status != Status.Deleted);
+
+        return await query.AnyAsync(x => x.Id == id);
     }
 
-    public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate = null)
+    public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate = null, bool withDeleted = false)
     {
-        var query = DbSet.Where(x => x.Status != Status.Deleted);
+        var query = DbSet.AsNoTracking();
+
+        if (!withDeleted)
+            query = query.Where(x => x.Status != Status.Deleted);
 
         if (predicate != null)
         {

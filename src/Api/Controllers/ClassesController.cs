@@ -1,5 +1,9 @@
 using Core.App.Controllers;
 using Core.DTOs;
+using Core.Entities;
+using Core.Enums;
+using Core.Errors;
+using Core.QueryParams;
 using Core.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,15 +19,15 @@ public class ClassesController : BaseApiController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetClasses()
+    public async Task<IActionResult> GetClasses([FromQuery] ClassParams query)
     {
-        var classes = await _classService.LoadAsync();
+        var classes = await _classService.LoadAsync(query);
 
         return Ok(classes);
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetClass(int id)
+    [HttpGet("{id:long}")]
+    public async Task<IActionResult> GetClass(long id)
     {
         var classEntity = await _classService.GetByIdAsync(id);
         return Ok(classEntity);
@@ -41,14 +45,20 @@ public class ClassesController : BaseApiController
     [HttpDelete("delete/{id:long}")]
     public async Task<IActionResult> DeleteClass(long id)
     {
-        var result = await _classService.SoftDeleteAsync(id);
-        return Ok(result);
+        if (!await _classService.ExistsAsync(id))
+            throw new AppException(404, "Class not found");
+
+        await _classService.SoftDeleteAsync(id);
+        return Ok(new ApiResponse(200, "Class deleted successfully"));
     }
 
     [HttpDelete("permanent-delete/{id:long}")]
     public async Task<IActionResult> PermanentDeleteClass(long id)
     {
-        var result = await _classService.PermanentDeleteAsync(id);
-        return Ok(result);
+        if (!await _classService.ExistsAsync(x => x.Id == id, true))
+            throw new AppException(404, "Class not found");
+
+        await _classService.PermanentDeleteAsync(id);
+        return Ok(new ApiResponse(200, "Class deleted successfully"));
     }
 }

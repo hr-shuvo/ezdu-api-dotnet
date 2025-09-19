@@ -15,14 +15,14 @@ public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class,
     }
 
 
-    public virtual async Task<TEntity> GetByIdAsync(long id, bool withDeleted = false)
+    public virtual async Task<TEntity> GetByIdAsync(long id, bool asTracking = false, bool withDeleted = false)
     {
-        return await _repository.GetByIdAsync(id, withDeleted);
+        return await _repository.GetByIdAsync(id, asTracking, withDeleted);
     }
 
-    public async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> predicate, bool withDeleted = false)
+    public async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> predicate, bool asTracking = false, bool withDeleted = false)
     {
-        return await _repository.GetAsync(predicate, withDeleted);
+        return await _repository.GetAsync(predicate, asTracking, withDeleted);
     }
 
     public async Task<(int, IEnumerable<TEntity>)> LoadAsync(int page = 1, int size = 10,
@@ -51,14 +51,14 @@ public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class,
         return _repository.PermanentDeleteAsync(id);
     }
 
-    public virtual async Task<bool> ExistsAsync(long id)
+    public virtual async Task<bool> ExistsAsync(long id, bool withDeleted = false)
     {
-        return await _repository.ExistsAsync(id);
+        return await _repository.ExistsAsync(id, withDeleted);
     }
 
-    public async Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> predicate)
+    public async Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> predicate, bool withDeleted = false)
     {
-        return await _repository.ExistsAsync(predicate);
+        return await _repository.ExistsAsync(predicate, withDeleted);
     }
 
     public async Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate)
