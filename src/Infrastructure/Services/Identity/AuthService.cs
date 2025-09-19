@@ -212,18 +212,7 @@ public class AuthService : IAuthService
     {
         try
         {
-            AppUser user;
-
-            if (request.IsPhone)
-            {
-                var recipient = NormalizeHelper.NormalizePhoneNumber(request.Recipient);
-
-                user = await _userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == recipient);
-            }
-            else
-            {
-                user = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == request.Recipient);
-            }
+            var user = await GetUserByRecipient(request.Recipient);
 
             if (user == null)
             {
@@ -316,17 +305,7 @@ public class AuthService : IAuthService
     {
         try
         {
-            AppUser user;
-
-            if (Helper.IsValidEmail(request.Recipient))
-            {
-                user = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == request.Recipient);
-            }
-            else
-            {
-                var recipient = NormalizeHelper.NormalizePhoneNumber(request.Recipient);
-                user = await _userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == recipient);
-            }
+            var user = await GetUserByRecipient(request.Recipient);
 
             if (user == null)
             {
@@ -393,6 +372,19 @@ public class AuthService : IAuthService
         };
 
         return userDto;
+    }
+    
+    private async Task<AppUser> GetUserByRecipient(string recipient)
+    {
+        if (Helper.IsValidEmail(recipient))
+        {
+            return await _userManager.Users.FirstOrDefaultAsync(u => u.Email == recipient);
+        }
+        else
+        {
+            var normalizedPhone = NormalizeHelper.NormalizePhoneNumber(recipient);
+            return await _userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == normalizedPhone);
+        }
     }
 
     #endregion
