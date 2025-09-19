@@ -6,7 +6,7 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Infrastructure.Repositories;
+namespace Infrastructure.Core.Repositories;
 
 public class BaseRepository<T> : IBaseRepository<T> where T : class, IBaseEntity
 {

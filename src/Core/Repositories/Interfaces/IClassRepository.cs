@@ -1,6 +1,0 @@
-namespace Core.Repositories.Interfaces;
-
-public interface IClassRepository
-{
-    
-}

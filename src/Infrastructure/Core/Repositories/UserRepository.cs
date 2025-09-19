@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using Core.App.Entities.Identity;
 using Core.App.Models;
 using Core.App.Repositories.Interfaces;
@@ -6,7 +5,7 @@ using Core.QueryParams;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Repositories;
+namespace Infrastructure.Core.Repositories;
 
 public class UserRepository : BaseRepository<AppUser>, IUserRepository
 {

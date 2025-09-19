@@ -3,7 +3,7 @@ using Core.App.Repositories.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Repositories;
+namespace Infrastructure.Core.Repositories;
 
 public class TokenRepository : BaseRepository<AuthToken>, ITokenRepository
 {

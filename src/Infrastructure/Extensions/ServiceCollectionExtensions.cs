@@ -4,8 +4,9 @@ using Core.App.Services.Identity;
 using Core.App.Services.Interfaces;
 using Core.Shared.Services;
 using Core.Shared.Services.Interfaces;
+using Infrastructure.Core;
+using Infrastructure.Core.Repositories;
 using Infrastructure.Data;
-using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,8 +20,11 @@ public static class ServiceCollectionExtensions
         services.AddDatabaseServices(configuration);
         services.AddAuthenticationServices(configuration);
         services.AddConfigureServices(configuration);
+        services.AddAppDependencyInjections();
 
         #region DI
+
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
         services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 
