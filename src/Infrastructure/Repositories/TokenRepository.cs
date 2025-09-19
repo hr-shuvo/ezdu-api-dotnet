@@ -1,5 +1,5 @@
 using Core.App.Entities.Identity;
-using Core.Repositories.Interfaces;
+using Core.App.Repositories.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 

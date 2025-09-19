@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using Core.App.DTOs.Common;
 
-namespace Core.Services.Interfaces;
+namespace Core.App.Services.Interfaces;
 
 public interface IBaseService<TEntity> where TEntity : class, IBaseEntity
 {

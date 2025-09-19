@@ -1,7 +1,8 @@
 using Core.App.Controllers;
 using Core.App.DTOs;
+using Core.App.Services.Interfaces;
+using Core.Extensions;
 using Core.QueryParams;
-using Core.Services.Interfaces;
 using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

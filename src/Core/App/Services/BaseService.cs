@@ -1,9 +1,9 @@
 using System.Linq.Expressions;
 using Core.App.DTOs.Common;
-using Core.Repositories.Interfaces;
-using Core.Services.Interfaces;
+using Core.App.Repositories.Interfaces;
+using Core.App.Services.Interfaces;
 
-namespace Core.Services;
+namespace Core.App.Services;
 
 public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class, IBaseEntity
 {

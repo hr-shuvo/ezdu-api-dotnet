@@ -3,13 +3,12 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Core.App.Entities.Identity;
-using Core.Repositories.Interfaces;
-using Core.Services;
-using Core.Services.Interfaces;
+using Core.App.Repositories.Interfaces;
+using Core.App.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Infrastructure.Services.Identity;
+namespace Core.App.Services.Identity;
 
 public class TokenService : BaseService<AuthToken>, ITokenService
 {

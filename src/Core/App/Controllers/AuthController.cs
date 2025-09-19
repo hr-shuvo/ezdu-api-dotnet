@@ -1,6 +1,6 @@
 using Core.App.DTOs.Auth;
+using Core.App.Services.Interfaces;
 using Core.Errors;
-using Core.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

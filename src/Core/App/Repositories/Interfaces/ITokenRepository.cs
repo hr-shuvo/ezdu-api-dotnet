@@ -1,6 +1,6 @@
 using Core.App.Entities.Identity;
 
-namespace Core.Repositories.Interfaces;
+namespace Core.App.Repositories.Interfaces;
 
 public interface ITokenRepository : IBaseRepository<AuthToken>
 {

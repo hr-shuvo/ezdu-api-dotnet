@@ -1,13 +1,13 @@
 using System.Linq.Expressions;
 using Core.App.DTOs;
 using Core.App.Entities.Identity;
+using Core.App.Repositories.Interfaces;
+using Core.App.Services.Interfaces;
 using Core.Errors;
 using Core.QueryParams;
-using Core.Repositories.Interfaces;
-using Core.Services.Interfaces;
 using Core.Shared.Models.Pagination;
 
-namespace Core.Services;
+namespace Core.App.Services;
 
 public class UserService : BaseService<AppUser>, IUserService
 {

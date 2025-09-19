@@ -1,11 +1,11 @@
-using Core.Repositories.Interfaces;
-using Core.Services;
-using Core.Services.Interfaces;
+using Core.App.Repositories.Interfaces;
+using Core.App.Services;
+using Core.App.Services.Identity;
+using Core.App.Services.Interfaces;
 using Core.Shared.Services;
 using Core.Shared.Services.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
-using Infrastructure.Services.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using Core.App.DTOs.Common;
 using Core.App.Models;
-using Core.Repositories.Interfaces;
+using Core.App.Repositories.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;

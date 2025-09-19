@@ -1,17 +1,17 @@
 using System.Security.Claims;
 using Core.App.DTOs.Auth;
 using Core.App.Entities.Identity;
+using Core.App.Services.Interfaces;
 using Core.App.Utils;
 using Core.Errors;
-using Core.Services.Interfaces;
+using Core.Extensions;
 using Core.Shared.Models.Messaging;
 using Core.Shared.Services.Interfaces;
-using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Infrastructure.Services.Identity;
+namespace Core.App.Services.Identity;
 
 public class AuthService : IAuthService
 {

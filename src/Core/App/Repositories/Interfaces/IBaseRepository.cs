@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 using Core.App.DTOs.Common;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Core.Repositories.Interfaces;
+namespace Core.App.Repositories.Interfaces;
 
 public interface IBaseRepository<T> where T :class, IBaseEntity
 {

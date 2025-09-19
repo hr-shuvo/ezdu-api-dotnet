@@ -3,7 +3,7 @@ using Core.App.Entities.Identity;
 using Core.QueryParams;
 using Core.Shared.Models.Pagination;
 
-namespace Core.Services.Interfaces;
+namespace Core.App.Services.Interfaces;
 
 public interface IUserService : IBaseService<AppUser>
 {

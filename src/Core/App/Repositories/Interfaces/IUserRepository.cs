@@ -1,8 +1,7 @@
-using System.Linq.Expressions;
 using Core.App.Entities.Identity;
 using Core.QueryParams;
 
-namespace Core.Repositories.Interfaces;
+namespace Core.App.Repositories.Interfaces;
 
 public interface IUserRepository : IBaseRepository<AppUser>
 {

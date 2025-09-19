@@ -1,8 +1,8 @@
 using System.Linq.Expressions;
 using Core.App.Entities.Identity;
 using Core.App.Models;
+using Core.App.Repositories.Interfaces;
 using Core.QueryParams;
-using Core.Repositories.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
