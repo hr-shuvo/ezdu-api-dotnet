@@ -11,4 +11,5 @@ public interface IClassService : IBaseService<Class>
 {
     Task<PagedList<Class>> LoadAsync(ClassParams query);
     Task<ApiResponse> SaveAsync(ClassDto classDto);
+    
 }

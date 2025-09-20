@@ -18,7 +18,10 @@ public interface IBaseRepository<T> where T :class, IBaseEntity
     Task<bool> ExistsAsync(long id, bool withDeleted = false);
     Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate = null, bool withDeleted = false);
     Task<int> CountAsync(Expression<Func<T, bool>> predicate = null);
+    
+    Task<T> RestoreAsync(long id);
+    Task<T> ToggleStatusAsync(long id);
 
-    IDbContextTransaction BeginTransaction();
-    void RefreshEntity(T entity);
+    Task<IDbContextTransaction> BeginTransactionAsync();
+    Task RefreshEntity(T entity);
 }

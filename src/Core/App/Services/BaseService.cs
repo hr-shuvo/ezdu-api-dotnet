@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using Core.App.DTOs.Common;
 using Core.App.Repositories.Interfaces;
 using Core.App.Services.Interfaces;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Core.App.Services;
 
@@ -31,7 +32,7 @@ public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class,
         return await _repository.LoadAsync(page, size, predicate);
     }
 
-    public async Task<TEntity> AddAsync(TEntity entity)
+    public virtual async Task<TEntity> AddAsync(TEntity entity)
     {
         return await _repository.AddAsync(entity);
     }
@@ -64,5 +65,25 @@ public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class,
     public async Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate)
     {
         return await _repository.CountAsync(predicate);
+    }
+    
+    public virtual async Task<TEntity> RestoreAsync(long id)
+    {
+        return await _repository.RestoreAsync(id);
+    }
+
+    public virtual async Task<TEntity> ToggleStatusAsync(long id)
+    {
+        return await _repository.ToggleStatusAsync(id);
+    }
+
+    public async Task<IDbContextTransaction> BeginTransactionAsync()
+    {
+        return await _repository.BeginTransactionAsync();
+    }
+
+    public async Task RefreshEntity(TEntity entity)
+    {
+        await _repository.RefreshEntity(entity);
     }
 }

@@ -1,10 +1,10 @@
 using Core.App.Attributes;
+using Core.App.DTOs.Common;
 
 namespace Core.DTOs;
 
-public class ClassDto
+public class ClassDto : BaseEntity
 {
-    public long Id { get; set; }
     public int Status { get; set; }
     
     public string Title { get; set; }
@@ -14,8 +14,5 @@ public class ClassDto
     public List<string> Groups { get; set; } = [];
     
     public bool HasBatch { get; set; }
-
-
-    public DateTime? CreatedAt { get; set; }
-    public DateTime? UpdatedAt { get; set; }
+    
 }

@@ -141,13 +141,48 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class, IBaseEntity
         return await query.CountAsync();
     }
 
-    public IDbContextTransaction BeginTransaction()
+    public async Task<T> RestoreAsync(long id)
     {
-        return _context.Database.BeginTransaction();
+        var entity = await DbSet.FirstOrDefaultAsync(x => x.Id == id);
+        if (entity == null) return null;
+
+        if (entity.Status != Status.Deleted) return entity;
+        
+        entity.Status = Status.Active;
+        entity.UpdatedAt = DateTime.UtcNow;
+        await _context.SaveChangesAsync();
+
+        return entity;
     }
 
-    public void RefreshEntity(T entity)
+    public async Task<T> ToggleStatusAsync(long id)
     {
-        throw new NotImplementedException();
+        var entity = await DbSet.FirstOrDefaultAsync(x => x.Id == id);
+        if (entity == null) return null;
+
+        entity.Status = entity.Status switch
+        {
+            Status.Active => Status.Inactive,
+            Status.Inactive => Status.Active,
+            _ => entity.Status
+        };
+
+        entity.UpdatedAt = DateTime.UtcNow;
+        await _context.SaveChangesAsync();
+
+        return entity;
+    }
+
+    public async Task<IDbContextTransaction> BeginTransactionAsync()
+    {
+        return await _context.Database.BeginTransactionAsync();
+    }
+
+    public async Task RefreshEntity(T entity)
+    {
+        var entry = _context.Entry(entity);
+        if (entry == null) return;
+
+        await entry.ReloadAsync();
     }
 }

@@ -24,5 +24,5 @@ public class PaginationParams
         set => _sortOrder = (value?.ToLower() == "desc" ? "desc" : "asc");
     }
 
-    public bool? IsDeleted { get; set; }
+    public bool? WithDeleted { get; set; }
 }

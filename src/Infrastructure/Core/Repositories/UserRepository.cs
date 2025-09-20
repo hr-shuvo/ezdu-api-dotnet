@@ -17,7 +17,7 @@ public class UserRepository : BaseRepository<AppUser>, IUserRepository
     {
         var query = DbSet.AsQueryable();
 
-        if (@params.IsDeleted != true)
+        if (@params.WithDeleted == false)
         {
             query = query.Where(x => x.Status != Status.Deleted);
         }

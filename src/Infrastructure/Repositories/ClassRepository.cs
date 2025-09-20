@@ -18,7 +18,7 @@ public class ClassRepository : BaseRepository<Class>, IClassRepository
     {
         var query = DbSet.AsQueryable();
 
-        if (@params.IsDeleted != true)
+        if (@params.WithDeleted == false)
         {
             query = query.Where(x => x.Status != Status.Deleted);
         }

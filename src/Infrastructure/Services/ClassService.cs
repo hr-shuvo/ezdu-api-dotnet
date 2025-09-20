@@ -77,7 +77,6 @@ public class ClassService : BaseService<Class>, IClassService
 
         entity.HasBatch = classDto.HasBatch;
         entity.Status = classDto.Status;
-        entity.CreatedAt = classDto.CreatedAt ?? DateTime.UtcNow;
         entity.UpdatedAt = DateTime.UtcNow;
 
         return entity;
