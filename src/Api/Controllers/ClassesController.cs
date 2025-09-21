@@ -49,6 +49,8 @@ public class ClassesController : BaseApiController
             throw new AppException(404, "Class not found");
 
         await _classService.SoftDeleteAsync(id);
+        await _classService.SaveChangesAsync();
+        
         return Ok(new ApiResponse(200, "Class deleted successfully"));
     }
 
@@ -59,6 +61,8 @@ public class ClassesController : BaseApiController
             throw new AppException(404, "Class not found");
 
         await _classService.PermanentDeleteAsync(id);
+        await _classService.SaveChangesAsync();
+        
         return Ok(new ApiResponse(200, "Class deleted successfully"));
     }
     
@@ -69,6 +73,7 @@ public class ClassesController : BaseApiController
             throw new AppException(404, "Class not found");
 
         var result = await _classService.RestoreAsync(id);
+        await _classService.SaveChangesAsync();
         
         return Ok(result);
     }
@@ -81,6 +86,8 @@ public class ClassesController : BaseApiController
             throw new AppException(404, "Class not found");
 
         var result =await _classService.ToggleStatusAsync(id);
+        await _classService.SaveChangesAsync();
+        
         return Ok(result);
     }
     

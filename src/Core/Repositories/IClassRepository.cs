@@ -6,5 +6,5 @@ namespace Core.Repositories;
 
 public interface IClassRepository : IBaseRepository<Class>
 {
-    Task<(int Count, List<Class> Items)> LoadAsync(ClassParams query);
+    // Task<(int Count, List<Class> Items)> LoadAsync(ClassParams query);
 }

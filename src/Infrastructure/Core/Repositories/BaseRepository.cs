@@ -11,7 +11,7 @@ namespace Infrastructure.Core.Repositories;
 public class BaseRepository<T> : IBaseRepository<T> where T : class, IBaseEntity
 {
     private readonly AppDbContext _context;
-    protected readonly DbSet<T> DbSet;
+    protected DbSet<T> DbSet;
 
     public BaseRepository(AppDbContext context)
     {
@@ -63,13 +63,13 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class, IBaseEntity
 
         return (count, result);
     }
-
+    
     public async Task<T> AddAsync(T entity)
     {
         entity.CreatedAt = DateTime.UtcNow;
         DbSet.Add(entity);
 
-        await _context.SaveChangesAsync();
+        // await _context.SaveChangesAsync();
         return entity;
     }
 
@@ -78,7 +78,7 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class, IBaseEntity
         entity.UpdatedAt = DateTime.UtcNow;
         _context.Entry(entity).State = EntityState.Modified;
 
-        await _context.SaveChangesAsync();
+        // await _context.SaveChangesAsync();
         return entity;
     }
 
@@ -90,7 +90,7 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class, IBaseEntity
             entity.Status = Status.Deleted;
             entity.UpdatedAt = DateTime.UtcNow;
 
-            await _context.SaveChangesAsync();
+            // await _context.SaveChangesAsync();
             return true;
         }
 
@@ -103,7 +103,7 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class, IBaseEntity
         if (entity == null) return false;
 
         DbSet.Remove(entity);
-        await _context.SaveChangesAsync();
+        // await _context.SaveChangesAsync();
         return true;
     }
 
@@ -150,7 +150,7 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class, IBaseEntity
         
         entity.Status = Status.Active;
         entity.UpdatedAt = DateTime.UtcNow;
-        await _context.SaveChangesAsync();
+        // await _context.SaveChangesAsync();
 
         return entity;
     }
@@ -168,9 +168,35 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class, IBaseEntity
         };
 
         entity.UpdatedAt = DateTime.UtcNow;
-        await _context.SaveChangesAsync();
+        // await _context.SaveChangesAsync();
 
         return entity;
+    }
+
+    public IQueryable<T> Query(bool withDeleted = false, bool asTracking = false)
+    {
+        var query = asTracking ? DbSet.AsQueryable() : DbSet.AsNoTracking();
+
+        if (!withDeleted)
+            query = query.Where(x => x.Status != Status.Deleted);
+
+        return query;
+    }
+
+    public async Task<(int Count, IEnumerable<T> Items)> ExecuteListAsync(IQueryable<T> queryable, int page = 1, int size = 10)
+    {
+        var count = await queryable.CountAsync();
+        var items = await queryable
+            .Skip((page - 1) * size)
+            .Take(size)
+            .ToListAsync();
+
+        return (count, items);
+    }
+
+    public async Task<int> SaveChangesAsync()
+    {
+        return await _context.SaveChangesAsync();
     }
 
     public async Task<IDbContextTransaction> BeginTransactionAsync()

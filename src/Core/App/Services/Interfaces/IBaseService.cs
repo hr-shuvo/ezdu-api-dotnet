@@ -24,7 +24,8 @@ public interface IBaseService<TEntity> where TEntity : class, IBaseEntity
     
     Task<TEntity> RestoreAsync(long id);
     Task<TEntity> ToggleStatusAsync(long id);
-    
+
+    Task<int> SaveChangesAsync();
     Task<IDbContextTransaction> BeginTransactionAsync();
     Task RefreshEntity(TEntity entity);
     

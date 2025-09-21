@@ -16,13 +16,13 @@ public class PaginationParams
     public string Search { get; set; }
     public virtual string OrderBy { get; set; }
 
-    private string _sortOrder = "asc";
+    private string _sortOrder = "desc";
 
     public string SortBy
     {
         get => _sortOrder;
-        set => _sortOrder = (value?.ToLower() == "desc" ? "desc" : "asc");
+        set => _sortOrder = (value?.ToLower() == "asc" ? "asc" : "desc");
     }
 
-    public bool? WithDeleted { get; set; }
+    public bool WithDeleted { get; set; }
 }

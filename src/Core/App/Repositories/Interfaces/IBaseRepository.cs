@@ -11,6 +11,7 @@ public interface IBaseRepository<T> where T :class, IBaseEntity
 
     // Task<IEnumerable<T>> LoadAsync(int page, int size, Expression<Func<T, bool>> predicate = null);
     Task<(int Count, IEnumerable<T> Items)> LoadAsync(int page, int size, Expression<Func<T, bool>> predicate = null);
+
     Task<T> AddAsync(T entity);
     Task<T> UpdateAsync(T entity);
     Task<bool> DeleteAsync(long id);
@@ -22,6 +23,10 @@ public interface IBaseRepository<T> where T :class, IBaseEntity
     Task<T> RestoreAsync(long id);
     Task<T> ToggleStatusAsync(long id);
 
+    IQueryable<T> Query(bool withDeleted = false, bool asTracking = false);
+    Task<(int Count, IEnumerable<T> Items)> ExecuteListAsync(IQueryable<T> queryable, int page = 1, int size = 10);
+
+    Task<int> SaveChangesAsync();
     Task<IDbContextTransaction> BeginTransactionAsync();
     Task RefreshEntity(T entity);
 }

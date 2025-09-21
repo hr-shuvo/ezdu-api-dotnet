@@ -19,17 +19,53 @@ public class ClassService : BaseService<Class>, IClassService
         _classRepository = repository;
     }
 
-    public async Task<PagedList<Class>> LoadAsync(ClassParams query)
+    public async Task<PagedList<Class>> LoadAsync(ClassParams @params)
     {
-        var result = await _classRepository.LoadAsync(query);
-        
-        return new PagedList<Class>(result.Items, result.Count, query.PageNumber, query.PageSize);
+        // var result = await _classRepository.LoadAsync(query);
+
+        var query = _classRepository.Query(@params.WithDeleted);
+
+        // TODO: Add more filters as needed
+        if (!string.IsNullOrWhiteSpace(@params.Search))
+        {
+            var search = @params.Search.Trim().ToLower();
+            query = query.Where(x =>
+                x.Title.ToLower().Contains(search) || (x.Groups != null && x.Groups.ToLower().Contains(search)));
+        }
+
+
+        if (@params.OrderBy != null)
+        {
+            query = @params.SortBy.ToLower() switch
+            {
+                "title" => @params.OrderBy == "desc"
+                    ? query.OrderByDescending(x => x.Title)
+                    : query.OrderBy(x => x.Title),
+                "createdat" => @params.OrderBy == "desc"
+                    ? query.OrderByDescending(x => x.CreatedAt)
+                    : query.OrderBy(x => x.CreatedAt),
+                "updatedat" => @params.OrderBy == "desc"
+                    ? query.OrderByDescending(x => x.UpdatedAt)
+                    : query.OrderBy(x => x.UpdatedAt),
+                _ => query.OrderByDescending(x => x.Id)
+            };
+        }
+        else
+        {
+            query = @params.SortBy == "desc"
+                ? query.OrderByDescending(x => x.CreatedAt)
+                : query.OrderBy(x => x.CreatedAt);
+        }
+
+        var result = await _classRepository.ExecuteListAsync(query, @params.PageNumber, @params.PageSize);
+
+        return new PagedList<Class>(result.Items, result.Count, @params.PageNumber, @params.PageSize);
     }
 
     public async Task<ApiResponse> SaveAsync(ClassDto classDto)
     {
         bool duplicateTitle;
-        
+
         if (classDto.Id > 0)
         {
             var existingEntity = await _classRepository.GetByIdAsync(classDto.Id);
@@ -48,6 +84,8 @@ public class ClassService : BaseService<Class>, IClassService
             MapDtoToEntity(classDto, existingEntity);
 
             await _classRepository.UpdateAsync(existingEntity);
+            await _classRepository.SaveChangesAsync();
+
             return new ApiResponse(200, "Class updated successfully");
         }
 
@@ -57,7 +95,9 @@ public class ClassService : BaseService<Class>, IClassService
             throw new AppException(400, "A class with this title already exists");
 
         var newEntity = MapDtoToEntity(classDto);
+
         await _classRepository.AddAsync(newEntity);
+        await _classRepository.SaveChangesAsync();
 
         return new ApiResponse(200, "Class added successfully");
     }
