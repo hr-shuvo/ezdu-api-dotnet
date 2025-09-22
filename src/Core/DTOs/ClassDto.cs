@@ -5,8 +5,6 @@ namespace Core.DTOs;
 
 public class ClassDto : BaseEntity
 {
-    public int Status { get; set; }
-    
     public string Title { get; set; }
     public int Segment { get; set; }
 
