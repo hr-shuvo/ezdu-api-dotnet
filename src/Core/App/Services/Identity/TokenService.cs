@@ -32,7 +32,7 @@ public class TokenService : BaseService<AuthToken>, ITokenService
     }
 
 
-    public string CreateAuthToken(AppUser user)
+    public string CreateAuthToken(AppUser user, IList<string> roles)
     {
         var claims = new List<Claim>
         {
@@ -40,6 +40,8 @@ public class TokenService : BaseService<AuthToken>, ITokenService
             new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName!),
             new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
         };
+        
+        claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
         var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
 

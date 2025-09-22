@@ -57,7 +57,7 @@ public class AuthService : IAuthService
 
             if (result.Succeeded)
             {
-                var userDto = ToUserAuthDto(user);
+                var userDto = await ToUserAuthDto(user);
 
                 #region Send Login Notification Email
 
@@ -148,7 +148,7 @@ public class AuthService : IAuthService
                 throw new AppException(400);
             }
 
-            var userDto = ToUserAuthDto(user);
+            var userDto = await ToUserAuthDto(user);
 
             return userDto;
         }
@@ -192,7 +192,7 @@ public class AuthService : IAuthService
                 throw new AppException(404, "User not found");
             }
 
-            var userDto = ToUserAuthDto(user);
+            var userDto = await ToUserAuthDto(user);
 
             return userDto;
         }
@@ -362,13 +362,14 @@ public class AuthService : IAuthService
 
     #region Private Methods
 
-    private UserAuthDto ToUserAuthDto(AppUser user)
+    private async Task<UserAuthDto> ToUserAuthDto(AppUser user)
     {
+        var roles = await _userManager.GetRolesAsync(user);
         var userDto = new UserAuthDto
         {
             Username = user.UserName,
             Name = user.UserName, // todo: add full name property
-            Token = _tokenService.CreateAuthToken(user)
+            Token = _tokenService.CreateAuthToken(user, roles)
         };
 
         return userDto;

@@ -4,7 +4,7 @@ namespace Core.App.Services.Interfaces;
 
 public interface ITokenService : IBaseService<AuthToken>
 {
-    string CreateAuthToken(AppUser user);
+    string CreateAuthToken(AppUser user, IList<string> roles);
     
     Task<bool> DeleteAllByUserIdAsync(long userId);
     

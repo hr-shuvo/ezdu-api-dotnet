@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using Core.App.Entities.Identity;
+using Core.App.Models;
 using Core.Errors;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -24,7 +25,7 @@ public static class IdentityServiceExtensions
                 opt.Password.RequireUppercase = false;
                 opt.Password.RequireLowercase = false;
                 opt.Password.RequiredUniqueChars = 1;
-                
+
                 opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
                 opt.Lockout.MaxFailedAccessAttempts = 5;
                 opt.Lockout.AllowedForNewUsers = true;
@@ -34,14 +35,17 @@ public static class IdentityServiceExtensions
             .AddSignInManager<SignInManager<AppUser>>()
             // .AddRoleValidator<RoleValidator<AppRole>>()
             .AddEntityFrameworkStores<AppDbContext>();
-        
+
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(opt =>
             {
                 opt.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:Key"]!)),
+                    IssuerSigningKey =
+                        new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(configuration["Token:Key"] ??
+                                                   throw new AppException(500, "Token key is missing"))),
                     ValidateIssuer = false,
                     ValidateAudience = false
                 };
@@ -76,9 +80,22 @@ public static class IdentityServiceExtensions
                         return context.Response.WriteAsync(result);
                     }
                 };
-
-
             });
+
+
+        services.AddAuthorization(opt =>
+        {
+            opt.AddPolicy(AppPolicies.CanCreate, policy => policy.RequireRole(AppRoleGroups.Contributor));
+            opt.AddPolicy(AppPolicies.CanUpdate, policy => policy.RequireRole(AppRoleGroups.Contributor));
+            opt.AddPolicy(AppPolicies.CanDelete, policy => policy.RequireRole(AppRoleGroups.Moderator));
+            
+            opt.AddPolicy(AppPolicies.CanManageUsers, policy => policy.RequireRole(AppRoleGroups.Admin));
+            opt.AddPolicy(AppPolicies.CanManageRoles, policy => policy.RequireRole(AppRoleGroups.SuperAdmin));
+            opt.AddPolicy(AppPolicies.CanViewReports, policy => policy.RequireRole(AppRoleGroups.Moderator));
+            
+            opt.AddPolicy(AppPolicies.CanConfigureSettings, policy => policy.RequireRole(AppRoleGroups.Admin));
+            opt.AddPolicy(AppPolicies.CanAccessAdminPanel, policy => policy.RequireRole(AppRoleGroups.Moderator));
+            
+        });
     }
-    
 }

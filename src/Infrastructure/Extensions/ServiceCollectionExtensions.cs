@@ -2,6 +2,7 @@ using Core.App.Repositories.Interfaces;
 using Core.App.Services;
 using Core.App.Services.Identity;
 using Core.App.Services.Interfaces;
+using Core.App.Utils;
 using Core.Shared.Services;
 using Core.Shared.Services.Interfaces;
 using Infrastructure.Core;
@@ -40,6 +41,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<ITokenRepository, TokenRepository>();
 
+        
+        services.AddScoped<ISeeder, Seeder>();
         #endregion
 
     }
