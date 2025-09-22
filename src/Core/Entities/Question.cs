@@ -4,7 +4,6 @@ namespace Core.Entities;
 
 public class Question : BaseEntity
 {
-    public string Text { get; set; }
     public string Options { get; set; } // JSON string representing options
     public string CorrectAnswer { get; set; }
     public int Marks { get; set; }

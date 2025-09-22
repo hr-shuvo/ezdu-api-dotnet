@@ -5,7 +5,6 @@ namespace Core.Entities;
 
 public class TopicContent : BaseEntity
 {
-    public string Title { get; set; }
     public ContentType Type { get; set; }
 
     public string Url { get; set; } // could be video link, document link, etc.

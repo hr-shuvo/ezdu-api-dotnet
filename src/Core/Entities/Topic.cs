@@ -4,7 +4,6 @@ namespace Core.Entities;
 
 public class Topic : BaseEntity
 {
-    public string Title { get; set; }
     public string Description { get; set; }
     
     public long SubjectId { get; set; }

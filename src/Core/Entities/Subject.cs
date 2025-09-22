@@ -6,7 +6,6 @@ namespace Core.Entities;
 
 public class Subject : BaseEntity
 {
-    public string Title { get; set; }
     public string SubTitle { get; set; }
     public string Code { get; set; }
     public string Groups { get; set; }

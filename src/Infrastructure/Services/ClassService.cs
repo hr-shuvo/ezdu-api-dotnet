@@ -30,7 +30,7 @@ public class ClassService : BaseService<Class>, IClassService
         {
             var search = @params.Search.Trim().ToLower();
             query = query.Where(x =>
-                x.Title.ToLower().Contains(search) || (x.Groups != null && x.Groups.ToLower().Contains(search)));
+                x.Name.ToLower().Contains(search) || (x.Groups != null && x.Groups.ToLower().Contains(search)));
         }
 
 
@@ -38,9 +38,9 @@ public class ClassService : BaseService<Class>, IClassService
         {
             query = @params.SortBy.ToLower() switch
             {
-                "title" => @params.OrderBy == "desc"
-                    ? query.OrderByDescending(x => x.Title)
-                    : query.OrderBy(x => x.Title),
+                "name" => @params.OrderBy == "desc"
+                    ? query.OrderByDescending(x => x.Name)
+                    : query.OrderBy(x => x.Name),
                 "createdat" => @params.OrderBy == "desc"
                     ? query.OrderByDescending(x => x.CreatedAt)
                     : query.OrderBy(x => x.CreatedAt),
@@ -64,7 +64,7 @@ public class ClassService : BaseService<Class>, IClassService
 
     public async Task<ApiResponse> SaveAsync(ClassDto classDto)
     {
-        bool duplicateTitle;
+        bool duplicateName;
 
         if (classDto.Id > 0)
         {
@@ -73,12 +73,12 @@ public class ClassService : BaseService<Class>, IClassService
             if (existingEntity is null)
                 throw new AppException(404, "Class not found");
 
-            if (existingEntity.Title != classDto.Title)
+            if (existingEntity.Name != classDto.Name)
             {
-                duplicateTitle = await _classRepository.ExistsAsync(x => x.Title == classDto.Title);
+                duplicateName = await _classRepository.ExistsAsync(x => x.Name == classDto.Name);
 
-                if (duplicateTitle)
-                    throw new AppException(400, "A class with this title already exists");
+                if (duplicateName)
+                    throw new AppException(400, "A class with this Name already exists");
             }
 
             MapDtoToEntity(classDto, existingEntity);
@@ -89,10 +89,10 @@ public class ClassService : BaseService<Class>, IClassService
             return new ApiResponse(200, "Class updated successfully");
         }
 
-        duplicateTitle = await _classRepository.ExistsAsync(x => x.Title == classDto.Title);
+        duplicateName = await _classRepository.ExistsAsync(x => x.Name == classDto.Name);
 
-        if (duplicateTitle)
-            throw new AppException(400, "A class with this title already exists");
+        if (duplicateName)
+            throw new AppException(400, "A class with this Name already exists");
 
         var newEntity = MapDtoToEntity(classDto);
 
@@ -110,7 +110,7 @@ public class ClassService : BaseService<Class>, IClassService
         entity ??= new Class();
 
         entity.Id = classDto.Id;
-        entity.Title = classDto.Title;
+        entity.Name = classDto.Name;
         entity.Segment = (Segment)classDto.Segment;
         entity.Groups = string.Join(",",
             (classDto.Groups ?? []).Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.Trim()));
@@ -127,7 +127,7 @@ public class ClassService : BaseService<Class>, IClassService
         return new ClassDto
         {
             Id = classEntity.Id,
-            Title = classEntity.Title,
+            Name = classEntity.Name,
             Segment = (int)classEntity.Segment,
             Groups = classEntity.Groups?.Split(',').ToList() ?? [],
             HasBatch = classEntity.HasBatch,

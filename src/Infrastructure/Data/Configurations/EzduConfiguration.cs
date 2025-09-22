@@ -11,7 +11,7 @@ public class ClassConfiguration : IEntityTypeConfiguration<Class>
     {
         builder.HasKey(x => x.Id);
         
-        builder.Property(x => x.Title).IsRequired().HasMaxLength(100);
+        builder.Property(x => x.Name).IsRequired().HasMaxLength(100);
         
         builder.Property(x => x.Segment).IsRequired();
         builder.Property(x => x.Groups).HasMaxLength(200);
@@ -24,7 +24,7 @@ public class SubjectConfiguration : IEntityTypeConfiguration<Subject>
     {
         builder.HasKey(x => x.Id);
         
-        builder.Property(x => x.Title).IsRequired().HasMaxLength(250);
+        builder.Property(x => x.Name).IsRequired().HasMaxLength(250);
         builder.Property(x => x.SubTitle).HasMaxLength(250);
         builder.Property(x => x.Code).IsRequired().HasMaxLength(100);
         builder.Property(x => x.Groups).IsRequired().HasMaxLength(250);
@@ -37,7 +37,7 @@ public class LessonConfiguration : IEntityTypeConfiguration<Lesson>
     {
         builder.HasKey(x => x.Id);
         
-        builder.Property(x => x.Title).IsRequired().HasMaxLength(250);
+        builder.Property(x => x.Name).IsRequired().HasMaxLength(250);
         builder.Property(x => x.SubTitle).HasMaxLength(250);
         builder.Property(x => x.Content).IsRequired().HasMaxLength(1000);
         builder.Property(x => x.VideoUrl).IsRequired().HasMaxLength(500);
@@ -56,7 +56,7 @@ public class TopicConfiguration : IEntityTypeConfiguration<Topic>
     {
         builder.HasKey(x => x.Id);
         
-        builder.Property(x => x.Title).IsRequired().HasMaxLength(250);
+        builder.Property(x => x.Name).IsRequired().HasMaxLength(250);
         builder.Property(x => x.Description).HasMaxLength(1000);
         
         builder.HasOne<Subject>()
@@ -77,7 +77,7 @@ public class ContentConfiguration : IEntityTypeConfiguration<TopicContent>
     {
         builder.HasKey(x => x.Id);
         
-        builder.Property(x => x.Title).IsRequired().HasMaxLength(250);
+        builder.Property(x => x.Name).IsRequired().HasMaxLength(250);
         
         builder.Property(x => x.Content).HasMaxLength(2000);
         
@@ -102,7 +102,7 @@ public class QuizConfiguration : IEntityTypeConfiguration<Quiz>
     {
         builder.HasKey(x => x.Id);
         
-        builder.Property(x => x.Title).IsRequired().HasMaxLength(250);
+        builder.Property(x => x.Name).IsRequired().HasMaxLength(250);
         builder.Property(x => x.Description).HasMaxLength(1000);
         builder.Property(x => x.TotalMarks).IsRequired();
     }
@@ -114,7 +114,7 @@ public class QuestionConfiguration : IEntityTypeConfiguration<Question>
     {
         builder.HasKey(x => x.Id);
         
-        builder.Property(x => x.Text).IsRequired().HasMaxLength(1000);
+        builder.Property(x => x.Name).IsRequired().HasMaxLength(1000);
         builder.Property(x => x.Options).IsRequired().HasMaxLength(2000);
         builder.Property(x => x.CorrectAnswer).IsRequired().HasMaxLength(500);
         
@@ -158,7 +158,7 @@ public class AchievementConfiguration : IEntityTypeConfiguration<Achievement>
         builder.HasKey(x => x.Id);
         
         // todo: add other properties
-        // builder.Property(x => x.Title).IsRequired().HasMaxLength(250);
+        // builder.Property(x => x.Name).IsRequired().HasMaxLength(250);
         // builder.Property(x => x.Description).HasMaxLength(1000);
         // builder.Property(x => x.IconUrl).HasMaxLength(500);
         // builder.Property(x => x.Criteria).HasMaxLength(1000);
@@ -171,7 +171,7 @@ public class AssignmentConfiguration : IEntityTypeConfiguration<Assignment>
     {
         builder.HasKey(x => x.Id);
         
-        builder.Property(x => x.Title).IsRequired().HasMaxLength(250);
+        builder.Property(x => x.Name).IsRequired().HasMaxLength(250);
         builder.Property(x => x.Description).HasMaxLength(1000);
         builder.Property(x => x.Type).IsRequired();
         

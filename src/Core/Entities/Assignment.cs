@@ -5,7 +5,6 @@ namespace Core.Entities;
 
 public class Assignment : BaseEntity
 {
-    public string Title { get; set; }
     public string Description { get; set; }
 
     public AssignmentType Type { get; set; }

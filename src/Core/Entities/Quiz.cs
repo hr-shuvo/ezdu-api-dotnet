@@ -5,7 +5,6 @@ namespace Core.Entities;
 
 public class Quiz : BaseEntity
 {
-    public string Title { get; set; }
     public string Description { get; set; }
     public QuizType Type { get; set; }
     public int TotalMarks { get; set; }

@@ -31,7 +31,7 @@ public class SubjectService : BaseService<Subject>, ISubjectService
         {
             var search = @params.Search.Trim().ToLower();
             query = query.Where(x =>
-                x.Title.ToLower().Contains(search) || (x.Groups != null && x.Groups.ToLower().Contains(search)));
+                x.Name.ToLower().Contains(search) || (x.Groups != null && x.Groups.ToLower().Contains(search)));
         }
 
 
@@ -39,9 +39,9 @@ public class SubjectService : BaseService<Subject>, ISubjectService
         {
             query = @params.SortBy.ToLower() switch
             {
-                "title" => @params.OrderBy == "desc"
-                    ? query.OrderByDescending(x => x.Title)
-                    : query.OrderBy(x => x.Title),
+                "name" => @params.OrderBy == "desc"
+                    ? query.OrderByDescending(x => x.Name)
+                    : query.OrderBy(x => x.Name),
                 "createdat" => @params.OrderBy == "desc"
                     ? query.OrderByDescending(x => x.CreatedAt)
                     : query.OrderBy(x => x.CreatedAt),
@@ -74,9 +74,9 @@ public class SubjectService : BaseService<Subject>, ISubjectService
             if (existingEntity is null)
                 throw new AppException(404, "Subject not found");
 
-            if (existingEntity.Title != dto.Title)
+            if (existingEntity.Name != dto.Title)
             {
-                duplicateTitle = await _repository.ExistsAsync(x => x.Title == dto.Title);
+                duplicateTitle = await _repository.ExistsAsync(x => x.Name == dto.Title);
 
                 if (duplicateTitle)
                     throw new AppException(400, "A Subject with this title already exists");
@@ -90,7 +90,7 @@ public class SubjectService : BaseService<Subject>, ISubjectService
             return new ApiResponse(200, "Subject updated successfully");
         }
 
-        duplicateTitle = await _repository.ExistsAsync(x => x.Title == dto.Title);
+        duplicateTitle = await _repository.ExistsAsync(x => x.Name == dto.Title);
 
         if (duplicateTitle)
             throw new AppException(400, "A Subject with this title already exists");
@@ -118,7 +118,7 @@ public class SubjectService : BaseService<Subject>, ISubjectService
         entity ??= new Subject();
 
         entity.Id = dto.Id;
-        entity.Title = dto.Title;
+        entity.Name = dto.Title;
         entity.Segment = (Segment)dto.Segment;
         entity.Groups = string.Join(",",
             (dto.Groups ?? []).Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.Trim()));
@@ -135,7 +135,7 @@ public class SubjectService : BaseService<Subject>, ISubjectService
         return new SubjectDto
         {
             Id = subjectEntity.Id,
-            Title = subjectEntity.Title,
+            Title = subjectEntity.Name,
             Segment = (int)subjectEntity.Segment,
             Groups = subjectEntity.Groups?.Split(',').ToList() ?? [],
             HasPaper = subjectEntity.HasPaper,
