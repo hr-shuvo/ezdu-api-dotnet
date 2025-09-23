@@ -119,7 +119,9 @@ public class SubjectService : BaseService<Subject>, ISubjectService
 
         entity.Id = dto.Id;
         entity.Name = dto.Name;
+        entity.Code = dto.Code;
         entity.Segment = (Segment)dto.Segment;
+        entity.ClassId = dto.ClassId;
         entity.Groups = string.Join(",",
             (dto.Groups ?? []).Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.Trim()));
 

@@ -2,13 +2,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Core.App.Attributes;
 
-public class AllowedValuesAttribute : ValidationAttribute
+public class AllowedValueListAttribute : ValidationAttribute
 {
     private readonly string[] _allowedValues;
     private readonly StringComparison _comparisonType;
 
 
-    public AllowedValuesAttribute(params string[] allowedValues)
+    public AllowedValueListAttribute(params string[] allowedValues)
     {
         _allowedValues = allowedValues ?? throw new ArgumentNullException(nameof(allowedValues));
         _comparisonType = StringComparison.OrdinalIgnoreCase;

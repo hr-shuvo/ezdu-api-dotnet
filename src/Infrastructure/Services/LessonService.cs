@@ -12,10 +12,12 @@ namespace Infrastructure.Services;
 public class LessonService : BaseService<Lesson>, ILessonService
 {
     private readonly ILessonRepository _repository;
+    private readonly ISubjectService _subjectService;
     
-    public LessonService(ILessonRepository repository) : base(repository)
+    public LessonService(ILessonRepository repository, ISubjectService subjectService) : base(repository)
     {
         _repository = repository;
+        _subjectService = subjectService;
     }
 
     public async Task<PagedList<Lesson>> LoadAsync(LessonParams @params)
@@ -61,6 +63,16 @@ public class LessonService : BaseService<Lesson>, ILessonService
 
     public async Task<ApiResponse> SaveAsync(LessonDto dto)
     {
+        if (dto.SubjectId > 0)
+        {
+            if (!await _subjectService.ExistsAsync(dto.SubjectId))
+                throw new AppException(404, "Subject not found");
+        }
+        else
+        {
+            throw new AppException(400, "Subject is required");
+        }
+        
         bool duplicateTitle;
 
         if (dto.Id > 0)
@@ -115,6 +127,10 @@ public class LessonService : BaseService<Lesson>, ILessonService
 
         entity.Id = dto.Id;
         entity.Name = dto.Name;
+        
+        entity.SubTitle = dto.SubTitle;
+        entity.Content = dto.Content;
+        entity.SubjectId = dto.SubjectId;
         
         entity.Status = dto.Status;
         entity.UpdatedAt = DateTime.UtcNow;

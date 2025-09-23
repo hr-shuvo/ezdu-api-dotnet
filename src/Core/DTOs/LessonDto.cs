@@ -7,6 +7,7 @@ public class LessonDto
 {
     public long Id { get; set; }
     public string Name { get; set; }
+    public string SubTitle { get; set; }
     
     public string Content { get; set; }
     

@@ -8,7 +8,7 @@ public class ClassDto : BaseEntity
     public string Title { get; set; }
     public int Segment { get; set; }
 
-    [AllowedValues("science", "commerce", "arts", "general")]
+    [AllowedValueList("science", "commerce", "arts", "general")]
     public List<string> Groups { get; set; } = [];
     
     public bool HasBatch { get; set; }

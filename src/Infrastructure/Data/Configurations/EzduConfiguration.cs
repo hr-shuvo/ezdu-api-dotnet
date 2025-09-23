@@ -27,7 +27,9 @@ public class SubjectConfiguration : IEntityTypeConfiguration<Subject>
         builder.Property(x => x.Name).IsRequired().HasMaxLength(250);
         builder.Property(x => x.SubTitle).HasMaxLength(250);
         builder.Property(x => x.Code).IsRequired().HasMaxLength(100);
-        builder.Property(x => x.Groups).IsRequired().HasMaxLength(250);
+        builder.Property(x => x.ClassId).IsRequired();
+
+        builder.Property(x => x.Groups).HasMaxLength(200);
     }
 }
 
@@ -40,7 +42,7 @@ public class LessonConfiguration : IEntityTypeConfiguration<Lesson>
         builder.Property(x => x.Name).IsRequired().HasMaxLength(250);
         builder.Property(x => x.SubTitle).HasMaxLength(250);
         builder.Property(x => x.Content).IsRequired().HasMaxLength(1000);
-        builder.Property(x => x.VideoUrl).IsRequired().HasMaxLength(500);
+        builder.Property(x => x.VideoUrl).HasMaxLength(500);
         builder.Property(x => x.ResourceUrl).HasMaxLength(500);
 
         builder.HasOne<Subject>()
