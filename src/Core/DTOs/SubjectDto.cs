@@ -6,8 +6,6 @@ namespace Core.DTOs;
 
 public class SubjectDto : BaseEntity
 {
-    [Required]
-    public string Title { get; set; }
     public string SubTitle { get; set; }
     public string Code { get; set; }
     

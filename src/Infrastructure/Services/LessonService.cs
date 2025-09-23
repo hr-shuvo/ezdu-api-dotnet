@@ -1,13 +1,141 @@
 using Core.App.Services;
+using Core.DTOs;
 using Core.Entities;
+using Core.Errors;
+using Core.QueryParams;
 using Core.Repositories;
 using Core.Services;
+using Core.Shared.Models.Pagination;
 
 namespace Infrastructure.Services;
 
 public class LessonService : BaseService<Lesson>, ILessonService
 {
+    private readonly ILessonRepository _repository;
+    
     public LessonService(ILessonRepository repository) : base(repository)
     {
+        _repository = repository;
     }
+
+    public async Task<PagedList<Lesson>> LoadAsync(LessonParams @params)
+    {
+        var query = _repository.Query(@params.WithDeleted);
+
+        // TODO: Add more filters as needed
+        if (!string.IsNullOrWhiteSpace(@params.Search))
+        {
+            var search = @params.Search.Trim().ToLower();
+            query = query.Where(x =>
+                x.Name.ToLower().Contains(search));
+        }
+
+
+        if (@params.OrderBy != null)
+        {
+            query = @params.SortBy.ToLower() switch
+            {
+                "name" => @params.OrderBy == "desc"
+                    ? query.OrderByDescending(x => x.Name)
+                    : query.OrderBy(x => x.Name),
+                "createdat" => @params.OrderBy == "desc"
+                    ? query.OrderByDescending(x => x.CreatedAt)
+                    : query.OrderBy(x => x.CreatedAt),
+                "updatedat" => @params.OrderBy == "desc"
+                    ? query.OrderByDescending(x => x.UpdatedAt)
+                    : query.OrderBy(x => x.UpdatedAt),
+                _ => query.OrderByDescending(x => x.Id)
+            };
+        }
+        else
+        {
+            query = @params.SortBy == "desc"
+                ? query.OrderByDescending(x => x.CreatedAt)
+                : query.OrderBy(x => x.CreatedAt);
+        }
+
+        var result = await _repository.ExecuteListAsync(query, @params.PageNumber, @params.PageSize);
+
+        return new PagedList<Lesson>(result.Items, result.Count, @params.PageNumber, @params.PageSize);
+    }
+
+    public async Task<ApiResponse> SaveAsync(LessonDto dto)
+    {
+        bool duplicateTitle;
+
+        if (dto.Id > 0)
+        {
+            var existingEntity = await _repository.GetByIdAsync(dto.Id);
+
+            if (existingEntity is null)
+                throw new AppException(404, "Subject not found");
+
+            if (existingEntity.Name != dto.Name)
+            {
+                duplicateTitle = await _repository.ExistsAsync(x => x.Name == dto.Name);
+
+                if (duplicateTitle)
+                    throw new AppException(400, "A Subject with this title already exists");
+            }
+
+            MapDtoToEntity(dto, existingEntity);
+
+            await _repository.UpdateAsync(existingEntity);
+            await _repository.SaveChangesAsync();
+
+            return new ApiResponse(200, "Subject updated successfully");
+        }
+
+        duplicateTitle = await _repository.ExistsAsync(x => x.Name == dto.Name);
+
+        if (duplicateTitle)
+            throw new AppException(400, "A Subject with this title already exists");
+
+        var newEntity = MapDtoToEntity(dto);
+
+        await _repository.AddAsync(newEntity);
+        await _repository.SaveChangesAsync();
+
+        return new ApiResponse(200, "Subject added successfully");
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    #region Private Methods
+
+    private static Lesson MapDtoToEntity(LessonDto dto, Lesson entity = null)
+    {
+        entity ??= new Lesson();
+
+        entity.Id = dto.Id;
+        entity.Name = dto.Name;
+        
+        entity.Status = dto.Status;
+        entity.UpdatedAt = DateTime.UtcNow;
+
+        return entity;
+    }
+
+    private static SubjectDto MapEntityToDto(Subject subjectEntity)
+    {
+        return new SubjectDto
+        {
+            Id = subjectEntity.Id,
+            Name = subjectEntity.Name,
+            Segment = (int)subjectEntity.Segment,
+            Groups = subjectEntity.Groups?.Split(',').ToList() ?? [],
+            HasPaper = subjectEntity.HasPaper,
+            Status = subjectEntity.Status,
+            CreatedAt = subjectEntity.CreatedAt,
+            UpdatedAt = subjectEntity.UpdatedAt
+        };
+    }
+
+    #endregion
 }

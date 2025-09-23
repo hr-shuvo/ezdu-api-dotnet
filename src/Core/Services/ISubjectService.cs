@@ -10,5 +10,5 @@ namespace Core.Services;
 public interface ISubjectService : IBaseService<Subject>
 {
     Task<PagedList<Subject>> LoadAsync(SubjectParams query);
-    Task<ApiResponse> SaveAsync(SubjectDto classDto);
+    Task<ApiResponse> SaveAsync(SubjectDto dto);
 }

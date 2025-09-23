@@ -74,9 +74,9 @@ public class SubjectService : BaseService<Subject>, ISubjectService
             if (existingEntity is null)
                 throw new AppException(404, "Subject not found");
 
-            if (existingEntity.Name != dto.Title)
+            if (existingEntity.Name != dto.Name)
             {
-                duplicateTitle = await _repository.ExistsAsync(x => x.Name == dto.Title);
+                duplicateTitle = await _repository.ExistsAsync(x => x.Name == dto.Name);
 
                 if (duplicateTitle)
                     throw new AppException(400, "A Subject with this title already exists");
@@ -90,7 +90,7 @@ public class SubjectService : BaseService<Subject>, ISubjectService
             return new ApiResponse(200, "Subject updated successfully");
         }
 
-        duplicateTitle = await _repository.ExistsAsync(x => x.Name == dto.Title);
+        duplicateTitle = await _repository.ExistsAsync(x => x.Name == dto.Name);
 
         if (duplicateTitle)
             throw new AppException(400, "A Subject with this title already exists");
@@ -118,7 +118,7 @@ public class SubjectService : BaseService<Subject>, ISubjectService
         entity ??= new Subject();
 
         entity.Id = dto.Id;
-        entity.Name = dto.Title;
+        entity.Name = dto.Name;
         entity.Segment = (Segment)dto.Segment;
         entity.Groups = string.Join(",",
             (dto.Groups ?? []).Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.Trim()));
@@ -135,7 +135,7 @@ public class SubjectService : BaseService<Subject>, ISubjectService
         return new SubjectDto
         {
             Id = subjectEntity.Id,
-            Title = subjectEntity.Name,
+            Name = subjectEntity.Name,
             Segment = (int)subjectEntity.Segment,
             Groups = subjectEntity.Groups?.Split(',').ToList() ?? [],
             HasPaper = subjectEntity.HasPaper,
