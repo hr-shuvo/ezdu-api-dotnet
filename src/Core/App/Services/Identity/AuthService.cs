@@ -178,7 +178,7 @@ public class AuthService : IAuthService
     {
         try
         {
-            var username = contextUser.GetUsername();
+            var username = UserContext.Username;
 
             if (string.IsNullOrEmpty(username))
             {

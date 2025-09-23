@@ -3,6 +3,7 @@ using Core.App.DTOs;
 using Core.App.Entities.Identity;
 using Core.App.Repositories.Interfaces;
 using Core.App.Services.Interfaces;
+using Core.App.Utils;
 using Core.Errors;
 using Core.QueryParams;
 using Core.Shared.Models.Pagination;
@@ -51,8 +52,10 @@ public class UserService : BaseService<AppUser>, IUserService
         return ToUserDto(result);
     }
 
-    public async Task<UserDto> UpdateUserAsync(long currentUserId, UserDto userDto)
+    public async Task<UserDto> UpdateUserAsync(UserDto userDto)
     {
+        var currentUserId = UserContext.UserId;
+        
         if (currentUserId != userDto.Id)
         {
             throw new AppException(400, "You can only update your own profile");

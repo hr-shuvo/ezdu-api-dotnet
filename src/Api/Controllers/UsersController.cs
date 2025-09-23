@@ -1,9 +1,8 @@
 using Core.App.Controllers;
 using Core.App.DTOs;
 using Core.App.Services.Interfaces;
-using Core.Extensions;
+using Core.App.Utils;
 using Core.QueryParams;
-using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,8 +29,7 @@ public class UsersController : BaseApiController
     [HttpGet("current")]
     public async Task<IActionResult> GetUserProfile()
     {
-        var currentUserId = User.GetUserId();
-        var user = await _userService.GetByUserIdAsync(currentUserId);
+        var user = await _userService.GetByUserIdAsync(UserContext.UserId);
         
         return Ok(user);
     }
@@ -48,8 +46,7 @@ public class UsersController : BaseApiController
     [HttpPut("update")]
     public async Task<IActionResult> UpdateUser([FromBody] UserDto user)
     {
-        var currentUserId = User.GetUserId();
-        var updatedUser = await _userService.UpdateUserAsync(currentUserId, user);
+        var updatedUser = await _userService.UpdateUserAsync(user);
         
         return Ok(updatedUser);
     }

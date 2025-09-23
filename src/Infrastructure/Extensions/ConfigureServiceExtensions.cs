@@ -1,4 +1,6 @@
+using Core.App.Utils;
 using Core.Errors;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,8 +24,8 @@ public static class ConfigureServiceExtensions
             options.InvalidModelStateResponseFactory = actionContext =>
             {
                 var errors = actionContext.ModelState
-                    .Where(e => e.Value!.Errors.Count > 0)
-                    .SelectMany(x => x.Value!.Errors)
+                    .Where(e => e.Value.Errors.Count > 0)
+                    .SelectMany(x => x.Value.Errors)
                     .Select(x => x.ErrorMessage).ToArray();
 
                 var errorResponse = new ApiValidationErrorResponse
@@ -33,6 +35,14 @@ public static class ConfigureServiceExtensions
 
                 return new BadRequestObjectResult(errorResponse);
             };
+        });
+
+        services.AddSingleton<IHttpContextAccessor>(x =>
+        {
+            var accessor = new HttpContextAccessor();
+            UserContext.Configure(accessor);
+            
+            return accessor;
         });
 
     }

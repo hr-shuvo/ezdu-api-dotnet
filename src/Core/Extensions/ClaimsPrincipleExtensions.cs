@@ -1,18 +1,16 @@
-using System.Security.Claims;
-
 namespace Core.Extensions;
 
 public static class ClaimsPrincipleExtensions
 {
-    public static string GetUsername(this ClaimsPrincipal user)
-    {
-        return user.FindFirst(ClaimTypes.Name)?.Value;
-    }
+    // public static string GetUsername(this ClaimsPrincipal user)
+    // {
+    //     return user.FindFirst(ClaimTypes.Name)?.Value;
+    // }
     
-    public static int GetUserId(this ClaimsPrincipal user)
-    {
-        var userId = int.Parse(user.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
-        return userId;
-    }
+    // public static int GetUserId(this ClaimsPrincipal user)
+    // {
+    //     var userId = int.Parse(user.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+    //     return userId;
+    // }
     
 }

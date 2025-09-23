@@ -1,4 +1,5 @@
 using Core.App.Middleware;
+using Core.App.Utils;
 using Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
