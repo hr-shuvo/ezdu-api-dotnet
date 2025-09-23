@@ -5,7 +5,7 @@ namespace Core.Entities;
 
 public class TopicContent : BaseEntity
 {
-    public ContentType Type { get; set; }
+    public ContentType Type { get; set; } = ContentType.READING_TEXT;
 
     public string Url { get; set; } // could be video link, document link, etc.
     public string Content { get; set; } // for textual content
