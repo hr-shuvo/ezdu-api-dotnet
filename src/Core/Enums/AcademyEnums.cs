@@ -35,9 +35,35 @@ public enum QuizType
     DESCRIPTIVE
 }
 
+public enum QuestionType
+{
+    MCQ,
+    TrueFalse,
+    ShortAnswer,
+    Essay,
+    FillInTheBlank
+}
+
+public enum DifficultyLevel
+{
+    Easy,
+    Medium,
+    Hard,
+    VeryHard
+}
+
 public enum AssignmentType
 {
     FILE_UPLOAD = 1,
     TEXT_SUBMISSION,
     LINK_SUBMISSION
+}
+
+public enum InstituteType
+{
+    School = 1,
+    College,
+    University,
+    Medical,
+    Engineering
 }
