@@ -129,6 +129,8 @@ public class QuestionConfiguration : IEntityTypeConfiguration<Question>
         builder.Property(x => x.DifficultyLevel).HasMaxLength(100);
         builder.Property(x => x.QuestionType).HasMaxLength(100);
         builder.Property(x => x.Tags).HasMaxLength(250);
+        
+        // builder.Property(x => x.TopicId).IsRequired(false);
 
         builder.HasOne<Subject>()
             .WithMany()

@@ -2,45 +2,45 @@ namespace Core.Enums;
 
 public enum Segment
 {
-    PRIMARY = 1,
-    SSC,
-    HSC,
-    ADMISSION,
-    JOB,
-    OTHERS
+    Primary = 1,
+    Ssc,
+    Hsc,
+    Admission,
+    Job,
+    Others
 }
 
 public enum Group
 {
-    SCIENCE = 1,
-    ARTS,
-    COMMERCE,
-    OTHERS
+    Science = 1,
+    Arts,
+    Commerce,
+    Others
 }
 
 public enum ContentType
 {
-    READING_TEXT = 1,
-    VIDEO,
-    PDF,
-    URL,
-    OTHERS
+    ReadingText = 1,
+    Video,
+    Pdf,
+    Url,
+    Others
 }
 
 public enum QuizType
 {
-    MCQ = 1,
-    TRUE_FALSE,
-    SHORT_ANSWER,
-    DESCRIPTIVE
+    Mcq = 1,
+    TrueFalse,
+    ShortAnswer,
+    Descriptive
 }
 
 public enum QuestionType
 {
-    MCQ,
+    Mcq = 1,
     TrueFalse,
     ShortAnswer,
-    Essay,
+    Descriptive,
     FillInTheBlank
 }
 
@@ -54,9 +54,9 @@ public enum DifficultyLevel
 
 public enum AssignmentType
 {
-    FILE_UPLOAD = 1,
-    TEXT_SUBMISSION,
-    LINK_SUBMISSION
+    FileUpload = 1,
+    TextSubmission,
+    LinkSubmission
 }
 
 public enum InstituteType

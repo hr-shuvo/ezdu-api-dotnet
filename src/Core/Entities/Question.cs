@@ -17,7 +17,7 @@ public class Question : BaseEntity
 
     public DifficultyLevel DifficultyLevel { get; set; } = DifficultyLevel.Medium;
     public int Marks { get; set; } = 1;
-    public string Tags { get; set; } = string.Empty;
+    public string Tags { get; set; } = string.Empty; // TODO: Change to List<string> later if needed
 
     // Hint & Explanation
     public string Hint { get; set; } = string.Empty;
@@ -27,8 +27,8 @@ public class Question : BaseEntity
     public string ExplanationVideoUrl { get; set; } = string.Empty;
     public string ExplanationResourceUrl { get; set; } = string.Empty;
     
-    public ICollection<Option> Options { get; set; } = new List<Option>(); // MCQ / TrueFalse
-    public ICollection<Answer> Answers { get; set; } = new List<Answer>();
-    public ICollection<QuestionReference> References { get; set; } = new List<QuestionReference>();
+    public ICollection<Option> Options { get; set; } = []; // MCQ / TrueFalse
+    public ICollection<Answer> Answers { get; set; } = [];
+    public ICollection<QuestionReference> References { get; set; } = [];
     
 }

@@ -13,7 +13,7 @@ public class Class : BaseEntity
 
     public Class()
     {
-        HasBatch = Segment is Segment.SSC or Segment.HSC;
+        HasBatch = Segment is Segment.Ssc or Segment.Hsc;
     }
     
 }

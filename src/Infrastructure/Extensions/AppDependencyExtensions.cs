@@ -32,7 +32,8 @@ public static class AppDependencyExtensions
         services.AddScoped<ISubjectRepository, SubjectRepository>();
         services.AddScoped<ITopicContentRepository, TopicContentRepository>();
         services.AddScoped<ITopicRepository, TopicRepository>();
-        
-        
+        services.AddScoped<IOptionRepository, OptionRepository>(); // note: no service used
+
+
     }
 }
