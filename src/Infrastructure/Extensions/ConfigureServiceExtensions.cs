@@ -11,13 +11,17 @@ public static class ConfigureServiceExtensions
 {
     public static void AddConfigureServices(this IServiceCollection services, IConfiguration config)
     {
-        // services.AddCors(opt =>
-        // {
-        //     opt.AddPolicy("CorsPolicy", policy =>
-        //     {
-        //         policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("");
-        //     });
-        // });
+        services.AddCors(opt =>
+        {
+            opt.AddPolicy("CorsPolicy", policy =>
+            {
+                policy
+                    .WithOrigins("http://localhost:3000")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            });
+        });
         
         services.Configure<ApiBehaviorOptions>(options =>
         {

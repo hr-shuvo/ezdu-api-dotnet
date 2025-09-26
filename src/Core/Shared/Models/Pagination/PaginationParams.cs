@@ -18,7 +18,7 @@ public class PaginationParams
 
     private string _sortOrder = "desc";
 
-    public string SortBy
+    public string SortBy // Sort direction
     {
         get => _sortOrder;
         set => _sortOrder = (value?.ToLower() == "asc" ? "asc" : "desc");
