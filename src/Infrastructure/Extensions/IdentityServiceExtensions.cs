@@ -64,21 +64,22 @@ public static class IdentityServiceExtensions
                     //
                     //     return Task.CompletedTask;
                     // },
-                    OnChallenge = context =>
-                    {
-                        context.HandleResponse();
-                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                        context.Response.ContentType = "application/json";
-                        var result = JsonSerializer.Serialize(new ApiExceptionResponse(401));
-                        return context.Response.WriteAsync(result);
-                    },
-                    OnForbidden = context =>
-                    {
-                        context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                        context.Response.ContentType = "application/json";
-                        var result = JsonSerializer.Serialize(new ApiExceptionResponse(403));
-                        return context.Response.WriteAsync(result);
-                    }
+                    
+                    // OnChallenge = context =>
+                    // {
+                    //     context.HandleResponse();
+                    //     context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    //     context.Response.ContentType = "application/json";
+                    //     var result = JsonSerializer.Serialize(new ApiExceptionResponse(401));
+                    //     return context.Response.WriteAsync(result);
+                    // },
+                    // OnForbidden = context =>
+                    // {
+                    //     context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                    //     context.Response.ContentType = "application/json";
+                    //     var result = JsonSerializer.Serialize(new ApiExceptionResponse(403));
+                    //     return context.Response.WriteAsync(result);
+                    // }
                 };
             });
 
