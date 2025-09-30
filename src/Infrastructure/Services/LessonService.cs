@@ -35,15 +35,15 @@ public class LessonService : BaseService<Lesson>, ILessonService
 
         if (@params.OrderBy != null)
         {
-            query = @params.SortBy.ToLower() switch
+            query = @params.OrderBy.ToLower() switch
             {
-                "name" => @params.OrderBy == "desc"
+                "name" => @params.SortBy == "desc"
                     ? query.OrderByDescending(x => x.Name)
                     : query.OrderBy(x => x.Name),
-                "createdat" => @params.OrderBy == "desc"
+                "createdat" => @params.SortBy == "desc"
                     ? query.OrderByDescending(x => x.CreatedAt)
                     : query.OrderBy(x => x.CreatedAt),
-                "updatedat" => @params.OrderBy == "desc"
+                "updatedat" => @params.SortBy == "desc"
                     ? query.OrderByDescending(x => x.UpdatedAt)
                     : query.OrderBy(x => x.UpdatedAt),
                 _ => query.OrderByDescending(x => x.Id)

@@ -3,10 +3,12 @@ using Core.DTOs;
 using Core.Errors;
 using Core.QueryParams;
 using Core.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
+[Authorize]
 public class SubjectsController : BaseApiController
 {
     private readonly ISubjectService _subjectService;

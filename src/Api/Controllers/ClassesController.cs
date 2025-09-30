@@ -18,7 +18,6 @@ public class ClassesController : BaseApiController
         _classService = classService;
     }
 
-    [AllowAnonymous]
     [HttpGet]
     public async Task<IActionResult> GetList([FromQuery] ClassParams query)
     {
@@ -91,6 +90,4 @@ public class ClassesController : BaseApiController
         
         return Ok(result);
     }
-    
-    
 }

@@ -5,10 +5,12 @@ using Core.Errors;
 using Core.QueryParams;
 using Core.Services;
 using Core.Shared.Models.Pagination;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
+[Authorize]
 public class LessonsController : BaseApiController
 {
     private readonly ILessonService _lessonService;
