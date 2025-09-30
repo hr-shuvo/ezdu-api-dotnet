@@ -52,18 +52,24 @@ public static class IdentityServiceExtensions
 
                 opt.Events = new JwtBearerEvents()
                 {
-                    // OnMessageReceived = context =>
-                    // {
-                    //     var accessToken = context.Request.Query["access_token"];
-                    //     var path = context.HttpContext.Request.Path;
-                    //
-                    //     if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
-                    //     {
-                    //         context.Token = accessToken;
-                    //     }
-                    //
-                    //     return Task.CompletedTask;
-                    // },
+                    OnMessageReceived = context =>
+                    {
+                        var authToken = context.Request.Cookies["token"];
+                        if (!string.IsNullOrEmpty(authToken))
+                        {
+                            context.Token = authToken;
+                        }
+                        
+                        // var accessToken = context.Request.Query["access_token"];
+                        // var path = context.HttpContext.Request.Path;
+                        //
+                        // if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+                        // {
+                        //     context.Token = accessToken;
+                        // }
+                    
+                        return Task.CompletedTask;
+                    },
                     
                     // OnChallenge = context =>
                     // {

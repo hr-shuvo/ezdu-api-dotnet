@@ -367,6 +367,7 @@ public class AuthService : IAuthService
         var roles = await _userManager.GetRolesAsync(user);
         var userDto = new UserAuthDto
         {
+            Id = user.Id,
             Username = user.UserName,
             Name = user.UserName, // todo: add full name property
             Token = _tokenService.CreateAuthToken(user, roles)
