@@ -37,7 +37,10 @@ public class AuthController : BaseApiController
         var user = await _authService.LoginAsync(loginDto);
         if (user == null) return Unauthorized();
 
-        Response.Cookies.Append("token", user.Token, new CookieOptions()
+        var token = user.Token;
+        user.Token = null;
+
+        Response.Cookies.Append("token", token, new CookieOptions()
         {
             Path = "/",
             HttpOnly = true,
@@ -55,6 +58,17 @@ public class AuthController : BaseApiController
         var user = await _authService.LoginAsync(loginDto);
         if (user == null) return Unauthorized();
 
+        if (Request.Cookies.ContainsKey("token"))
+        {
+            Response.Cookies.Delete("token", new CookieOptions
+            {
+                Path = "/",
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None
+            });
+        }
+        
         return Ok(user);
     }
 
