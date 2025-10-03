@@ -5,7 +5,6 @@ namespace Core.DTOs;
 
 public class ClassDto : BaseEntity
 {
-    public string Title { get; set; }
     public int Segment { get; set; }
 
     [AllowedValueList("science", "commerce", "arts", "general")]

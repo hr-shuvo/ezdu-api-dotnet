@@ -1,4 +1,5 @@
 using Core.App.Services;
+using Core.App.Utils;
 using Core.DTOs;
 using Core.Entities;
 using Core.Enums;
@@ -107,7 +108,7 @@ public class ClassService : BaseService<Class>, IClassService
 
     private static Class MapDtoToEntity(ClassDto classDto, Class entity = null)
     {
-        entity ??= new Class();
+        entity ??= new Class { CreatedBy = UserContext.UserId };
 
         entity.Id = classDto.Id;
         entity.Name = classDto.Name;
@@ -118,6 +119,7 @@ public class ClassService : BaseService<Class>, IClassService
         entity.HasBatch = classDto.HasBatch;
         entity.Status = classDto.Status;
         entity.UpdatedAt = DateTime.UtcNow;
+        entity.UpdatedBy = UserContext.UserId;
 
         return entity;
     }

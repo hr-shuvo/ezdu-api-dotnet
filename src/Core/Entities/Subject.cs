@@ -17,7 +17,7 @@ public class Subject : BaseEntity
 
     [NotMapped]
     public List<Group> GroupList {
-        get => string.IsNullOrWhiteSpace(Groups) ? [] : Groups.Split(',').Select(Enum.Parse<Group>).ToList();
+        get => string.IsNullOrWhiteSpace(Groups) ? [] : Groups.Split(',').Select(s=> Enum.Parse<Group>(s, true)).ToList();
         set => Groups = string.Join(",", value);
     }
     
