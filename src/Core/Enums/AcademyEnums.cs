@@ -3,6 +3,7 @@ namespace Core.Enums;
 public enum Segment
 {
     Primary = 1,
+    Junior = 2,
     Ssc,
     Hsc,
     Admission,

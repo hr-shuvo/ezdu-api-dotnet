@@ -66,7 +66,10 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class, IBaseEntity
     
     public async Task<T> AddAsync(T entity)
     {
-        entity.CreatedAt = DateTime.UtcNow;
+        var now = DateTime.UtcNow;
+        entity.CreatedAt = now;
+        entity.UpdatedAt = now;
+        
         DbSet.Add(entity);
 
         // await _context.SaveChangesAsync();
