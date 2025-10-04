@@ -29,13 +29,47 @@ public class UserService : BaseService<AppUser>, IUserService
         return ToUserDto(result);
     }
 
-    public async Task<PagedList<UserDto>> GetUsersAsync(UserParams query)
+    public async Task<PagedList<UserDto>> GetUsersAsync(UserParams @params)
     {
-        var result = await _userRepository.LoadAsync(query);
+        var query = _userRepository.Query(@params.WithDeleted);
+
+        // TODO: Add more filters as needed
+        if (!string.IsNullOrWhiteSpace(@params.Search))
+        {
+            var search = @params.Search.Trim().ToLower();
+            query = query.Where(x =>
+                x.Firstname.Contains(search, StringComparison.CurrentCultureIgnoreCase) ||
+                x.Lastname.Contains(search, StringComparison.CurrentCultureIgnoreCase));
+        }
+        
+        if (@params.OrderBy != null)
+        {
+            query = @params.OrderBy.ToLower() switch
+            {
+                "name" => @params.SortBy == "desc"
+                    ? query.OrderByDescending(x => x.Firstname)
+                    : query.OrderBy(x => x.Firstname),
+                "createdat" => @params.SortBy == "desc"
+                    ? query.OrderByDescending(x => x.CreatedAt)
+                    : query.OrderBy(x => x.CreatedAt),
+                "updatedat" => @params.SortBy == "desc"
+                    ? query.OrderByDescending(x => x.UpdatedAt)
+                    : query.OrderBy(x => x.UpdatedAt),
+                _ => query.OrderByDescending(x => x.Id)
+            };
+        }
+        else
+        {
+            query = @params.SortBy == "desc"
+                ? query.OrderByDescending(x => x.CreatedAt)
+                : query.OrderBy(x => x.CreatedAt);
+        }
+
+        var result = await _userRepository.ExecuteListAsync(query, @params.PageNumber, @params.PageSize);
 
         var users = result.Items.Select(ToUserDto).ToList();
 
-        return new PagedList<UserDto>(users, result.Count, query.PageNumber, query.PageSize);
+        return new PagedList<UserDto>(users, result.Count, @params.PageNumber, @params.PageSize);
     }
 
     public async Task<UserDto> GetByUsernameAsync(string query)
@@ -55,7 +89,7 @@ public class UserService : BaseService<AppUser>, IUserService
     public async Task<UserDto> UpdateUserAsync(UserDto userDto)
     {
         var currentUserId = UserContext.UserId;
-        
+
         if (currentUserId != userDto.Id)
         {
             throw new AppException(400, "You can only update your own profile");
@@ -85,7 +119,7 @@ public class UserService : BaseService<AppUser>, IUserService
             Id = u.Id,
             UserName = u.UserName,
             Email = u.Email,
-            Name = u.UserName,
+            Name = $"{u.Firstname} {u.Lastname}".Trim(),
             CreatedAt = u.CreatedAt,
 
             Status = u.Status,

@@ -25,6 +25,13 @@ public class UsersController : BaseApiController
         
         return Ok(users);
     }
+    
+    [HttpGet("{id:long}")]
+    public async Task<IActionResult> Get(long id)
+    {
+        var user = await _userService.GetByUserIdAsync(id);
+        return Ok(user);
+    }
 
     [HttpGet("current")]
     public async Task<IActionResult> GetUserProfile()

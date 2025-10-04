@@ -10,6 +10,11 @@ public class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
     {
         builder.HasKey(u => u.Id);
         
+        builder.Property(u => u.Firstname).IsRequired().HasMaxLength(150);
+        builder.Property(u => u.Lastname).HasMaxLength(150);
+        builder.Property(u => u.Email).HasMaxLength(150);
+        builder.Property(u => u.UserName).HasMaxLength(150);
+        
         builder.HasIndex(u => u.UserName).IsUnique();
         builder.HasIndex(u => u.Email).IsUnique();
         

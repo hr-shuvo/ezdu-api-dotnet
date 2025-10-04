@@ -54,13 +54,24 @@ public class ExceptionMiddleware
             else
             {
                 statusCode = (int)HttpStatusCode.InternalServerError;
-                message = _env.IsDevelopment() ? ex.Message : "Internal Server Error";
+                // message = _env.IsDevelopment() ? ex.Message : "Internal Server Error";
+                if (_env.IsDevelopment())
+                {
+                    var innerMessage = ex.InnerException?.Message;
+                    message = innerMessage != null 
+                        ? $"{ex.Message} → {innerMessage}"
+                        : ex.Message;
+                }
+                else
+                {
+                    message = "Internal Server Error";
+                }
             }
             
             context.Response.StatusCode = statusCode;
 
             var response = _env.IsDevelopment()
-                ? new ApiExceptionResponse(context.Response.StatusCode, message, ex.StackTrace!)
+                ? new ApiExceptionResponse(context.Response.StatusCode, message, ex.StackTrace)
                 : new ApiExceptionResponse(context.Response.StatusCode, "Internal Server Error");
 
             var json = JsonSerializer.Serialize(response, options);

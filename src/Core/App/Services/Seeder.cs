@@ -42,6 +42,7 @@ public class Seeder : ISeeder
             {
                 var user = new AppUser
                 {
+                    Firstname = role,
                     UserName = defaultUserName,
                     Email = defaultUserName,
                     EmailConfirmed = true
