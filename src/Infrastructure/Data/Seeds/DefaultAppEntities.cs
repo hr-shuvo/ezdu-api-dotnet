@@ -75,18 +75,20 @@ public class DefaultAppEntities
                         _ => ""
                     };
 
-                    var subClassEntity = new Subject()
+                    var subjectEntity = new Subject()
                     {
                         Name = name,
                         SubTitle = name.ToLower(),
                         Code = name.ToLower().Replace(" ", "") + classEntity.Id,
                         Segment = classEntity.Segment,
+                        ClassId = classEntity.Id,
+                        
                     };
 
-                    await _unitOfWork.Repository<Subject>().AddAsync(subClassEntity);
+                    await _unitOfWork.Repository<Subject>().AddAsync(subjectEntity);
                     await _unitOfWork.CompleteAsync();
 
-                    await AddLessonsForSubject(subClassEntity, classEntity.Segment);
+                    await AddLessonsForSubject(subjectEntity, classEntity.Segment);
                 }
             }
         }

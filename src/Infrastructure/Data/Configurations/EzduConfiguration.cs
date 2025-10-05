@@ -41,11 +41,11 @@ public class LessonConfiguration : IEntityTypeConfiguration<Lesson>
 
         builder.Property(x => x.Name).IsRequired().HasMaxLength(250);
         builder.Property(x => x.SubTitle).HasMaxLength(250);
-        builder.Property(x => x.Content).IsRequired().HasMaxLength(1000);
+        builder.Property(x => x.Content).HasMaxLength(1000);
         builder.Property(x => x.VideoUrl).HasMaxLength(500);
         builder.Property(x => x.ResourceUrl).HasMaxLength(500);
 
-        builder.HasOne<Subject>()
+        builder.HasOne(x => x.Subject)
             .WithMany()
             .HasForeignKey(x => x.SubjectId)
             .OnDelete(DeleteBehavior.Restrict);

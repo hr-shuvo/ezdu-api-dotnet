@@ -10,5 +10,6 @@ namespace Core.Services;
 public interface ILessonService : IBaseService<Lesson>
 {
     Task<PagedList<Lesson>> LoadAsync(LessonParams query);
+    Task<Lesson> GetByIdAsync(long id, bool asTracking = false, bool withDeleted = false);
     Task<ApiResponse> SaveAsync(LessonDto dto);
 }

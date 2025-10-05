@@ -32,29 +32,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-
-#region Seed
-
-var scope = app.Services.CreateScope();
-var services = scope.ServiceProvider;
-try
-{
-    var context = services.GetRequiredService<AppDbContext>();
-    await context.Database.MigrateAsync();
-
-    var uow = services.GetRequiredService<IUnitOfWork>();
-    var seed = new DefaultAppEntities(uow);
-    await seed.SeedAllAsync();
-}
-catch (Exception ex)
-{
-    var logger = services.GetRequiredService<ILogger<Program>>();
-    logger.LogError(ex, "An error occurred during migration");
-}
-
-
-
-#endregion
-
-
 app.Run();

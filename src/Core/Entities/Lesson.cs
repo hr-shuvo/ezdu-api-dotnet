@@ -10,4 +10,5 @@ public class Lesson : BaseEntity
     public string ResourceUrl { get; set; }
     
     public long SubjectId { get; set; }
+    public Subject Subject { get; set; }
 }

@@ -61,6 +61,16 @@ public class LessonService : BaseService<Lesson>, ILessonService
         return new PagedList<Lesson>(result.Items, result.Count, @params.PageNumber, @params.PageSize);
     }
 
+    public override async Task<Lesson> GetByIdAsync(long id, bool asTracking = false, bool withDeleted = false)
+    {
+        var entity = await _repository.GetByIdAsync(id, false, withDeleted);
+        var subject = await _subjectService.GetByIdAsync(entity.SubjectId, false, withDeleted);
+        
+        entity.Subject = subject;
+        
+        return entity;
+    }
+
     public async Task<ApiResponse> SaveAsync(LessonDto dto)
     {
         if (dto.SubjectId > 0)
@@ -80,14 +90,14 @@ public class LessonService : BaseService<Lesson>, ILessonService
             var existingEntity = await _repository.GetByIdAsync(dto.Id);
 
             if (existingEntity is null)
-                throw new AppException(404, "Subject not found");
+                throw new AppException(404, "Lesson not found");
 
             if (existingEntity.Name != dto.Name)
             {
                 duplicateTitle = await _repository.ExistsAsync(x => x.Name == dto.Name);
 
                 if (duplicateTitle)
-                    throw new AppException(400, "A Subject with this title already exists");
+                    throw new AppException(400, "A Lesson with this title already exists");
             }
 
             MapDtoToEntity(dto, existingEntity);

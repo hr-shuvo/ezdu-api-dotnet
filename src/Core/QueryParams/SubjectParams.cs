@@ -4,5 +4,5 @@ namespace Core.QueryParams;
 
 public class SubjectParams : PaginationParams
 {
-    
+    public long ClassId { get; set; }
 }

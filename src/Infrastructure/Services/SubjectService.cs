@@ -25,13 +25,17 @@ public class SubjectService : BaseService<Subject>, ISubjectService
         // var result = await _subjectRepository.LoadAsync(query);
 
         var query = _repository.Query(@params.WithDeleted);
-
-        // TODO: Add more filters as needed
+        
         if (!string.IsNullOrWhiteSpace(@params.Search))
         {
             var search = @params.Search.Trim().ToLower();
             query = query.Where(x =>
                 x.Name.ToLower().Contains(search) || (x.Groups != null && x.Groups.ToLower().Contains(search)));
+        }
+
+        if (@params.ClassId > 0)
+        {
+            query = query.Where(x => x.ClassId == @params.ClassId);
         }
 
 
