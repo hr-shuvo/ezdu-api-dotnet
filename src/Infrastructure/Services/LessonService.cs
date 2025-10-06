@@ -13,7 +13,7 @@ public class LessonService : BaseService<Lesson>, ILessonService
 {
     private readonly ILessonRepository _repository;
     private readonly ISubjectService _subjectService;
-    
+
     public LessonService(ILessonRepository repository, ISubjectService subjectService) : base(repository)
     {
         _repository = repository;
@@ -24,12 +24,17 @@ public class LessonService : BaseService<Lesson>, ILessonService
     {
         var query = _repository.Query(@params.WithDeleted);
 
-        // TODO: Add more filters as needed
+
         if (!string.IsNullOrWhiteSpace(@params.Search))
         {
             var search = @params.Search.Trim().ToLower();
             query = query.Where(x =>
-                x.Name.ToLower().Contains(search));
+                x.Name.Contains(search, StringComparison.CurrentCultureIgnoreCase));
+        }
+
+        if (@params.SubjectId > 0)
+        {
+            query = query.Where(x => x.SubjectId == @params.SubjectId);
         }
 
 
@@ -65,9 +70,9 @@ public class LessonService : BaseService<Lesson>, ILessonService
     {
         var entity = await _repository.GetByIdAsync(id, false, withDeleted);
         var subject = await _subjectService.GetByIdAsync(entity.SubjectId, false, withDeleted);
-        
+
         entity.Subject = subject;
-        
+
         return entity;
     }
 
@@ -82,7 +87,7 @@ public class LessonService : BaseService<Lesson>, ILessonService
         {
             throw new AppException(400, "Subject is required");
         }
-        
+
         bool duplicateTitle;
 
         if (dto.Id > 0)
@@ -120,15 +125,8 @@ public class LessonService : BaseService<Lesson>, ILessonService
 
         return new ApiResponse(200, "Subject added successfully");
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
     #region Private Methods
 
     private static Lesson MapDtoToEntity(LessonDto dto, Lesson entity = null)
@@ -137,11 +135,11 @@ public class LessonService : BaseService<Lesson>, ILessonService
 
         entity.Id = dto.Id;
         entity.Name = dto.Name;
-        
+
         entity.SubTitle = dto.SubTitle;
         entity.Content = dto.Content;
         entity.SubjectId = dto.SubjectId;
-        
+
         entity.Status = dto.Status;
         entity.UpdatedAt = DateTime.UtcNow;
 
