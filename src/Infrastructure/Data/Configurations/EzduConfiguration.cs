@@ -59,14 +59,15 @@ public class TopicConfiguration : IEntityTypeConfiguration<Topic>
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Name).IsRequired().HasMaxLength(250);
+        builder.Property(x => x.SubTitle).HasMaxLength(250);
         builder.Property(x => x.Description).HasMaxLength(1000);
 
-        builder.HasOne<Subject>()
+        builder.HasOne(x => x.Subject)
             .WithMany()
             .HasForeignKey(x => x.SubjectId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne<Lesson>()
+        builder.HasOne(x => x.Lesson)
             .WithMany()
             .HasForeignKey(x => x.LessonId)
             .OnDelete(DeleteBehavior.Restrict);

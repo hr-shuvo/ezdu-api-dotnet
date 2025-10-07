@@ -176,7 +176,7 @@ public class QuestionService : BaseService<Question>, IQuestionService
 
             return new ApiResponse(200, "Subject added successfully");
         }
-        catch (Exception ex)
+        catch 
         {
             await transaction.RollbackAsync();
             throw;

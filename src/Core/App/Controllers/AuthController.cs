@@ -38,16 +38,16 @@ public class AuthController : BaseApiController
         if (user == null) return Unauthorized();
 
         var token = user.Token;
-        user.Token = null;
+        // user.Token = null;
 
-        Response.Cookies.Append("token", token, new CookieOptions()
-        {
-            Path = "/",
-            HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.None,
-            Expires = DateTime.UtcNow.AddDays(7),
-        });
+        // Response.Cookies.Append("token", token, new CookieOptions()
+        // {
+        //     Path = "/",
+        //     HttpOnly = true,
+        //     Secure = true,
+        //     SameSite = SameSiteMode.None,
+        //     Expires = DateTime.UtcNow.AddDays(7),
+        // });
 
         return Ok(user);
     }

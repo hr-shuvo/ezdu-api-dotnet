@@ -71,6 +71,18 @@ public class TopicService : BaseService<Topic>, ITopicService
         return new PagedList<Topic>(result.Items, result.Count, @params.PageNumber, @params.PageSize);
     }
 
+    public async Task<Topic> GetByIdAsync(long id, bool asTracking = false, bool withDeleted = false)
+    {
+        var entity = await _repository.GetByIdAsync(id, false, withDeleted);
+        var subject = await _subjectService.GetByIdAsync(entity.SubjectId, false, withDeleted);
+        var lesson = await _lessonService.GetByIdAsync(entity.LessonId, false, withDeleted);
+
+        entity.Subject = subject;
+        entity.Lesson = lesson;
+
+        return entity;
+    }
+
     public async Task<ApiResponse> SaveAsync(TopicDto dto)
     {
         if (dto.SubjectId > 0 && !await _subjectService.ExistsAsync(dto.SubjectId.Value))
@@ -126,10 +138,12 @@ public class TopicService : BaseService<Topic>, ITopicService
 
         entity.Id = dto.Id;
         entity.Name = dto.Name;
+        entity.SubTitle = dto.SubTitle;
+        entity.Description = dto.Description;
 
-        entity.SubjectId = dto.SubjectId.Value;
-        entity.LessonId = dto.LessonId.Value;
-        
+        if (dto.SubjectId != null) entity.SubjectId = dto.SubjectId.Value;
+        if (dto.LessonId != null) entity.LessonId = dto.LessonId.Value;
+
         entity.Status = dto.Status;
         entity.UpdatedAt = DateTime.UtcNow;
 
