@@ -11,6 +11,10 @@ public class TopicContent : BaseEntity
     public string Content { get; set; } // for textual content
 
     public int Order { get; set; }
+
+    public long SubjectId { get; set; }
+    public long LessonId { get; set; }
     public long TopicId { get; set; }
+    public Topic Topic { get; set; }
     
 }

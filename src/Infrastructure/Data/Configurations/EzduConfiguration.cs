@@ -88,10 +88,14 @@ public class TopicContentConfiguration : IEntityTypeConfiguration<TopicContent>
         builder.Property(x => x.Type).IsRequired();
 
 
-        builder.HasOne<Topic>()
+        builder.HasOne(x => x.Topic)
             .WithMany()
             .HasForeignKey(x => x.TopicId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasIndex(x => x.SubjectId);
+        builder.HasIndex(x => x.LessonId);
+        builder.HasIndex(x => x.TopicId);
     }
 }
 
@@ -130,7 +134,7 @@ public class QuestionConfiguration : IEntityTypeConfiguration<Question>
         builder.Property(x => x.DifficultyLevel).HasMaxLength(100);
         builder.Property(x => x.QuestionType).HasMaxLength(100);
         builder.Property(x => x.Tags).HasMaxLength(250);
-        
+
         // builder.Property(x => x.TopicId).IsRequired(false);
 
         builder.HasOne<Subject>()
@@ -209,7 +213,7 @@ public class QuestionReferenceConfiguration : IEntityTypeConfiguration<QuestionR
     {
         builder.Ignore(x => x.Id);
         builder.Ignore(x => x.Name);
-        
+
         builder.HasKey(x => new { x.QuestionId, x.InstituteId });
 
         builder.HasOne<Question>()
@@ -226,7 +230,6 @@ public class QuestionReferenceConfiguration : IEntityTypeConfiguration<QuestionR
 
         builder.HasIndex(x => x.QuestionId);
         builder.HasIndex(x => x.InstituteId);
-        
     }
 }
 
@@ -286,5 +289,3 @@ public class ProgressConfiguration : IEntityTypeConfiguration<Progress>
         builder.HasKey(x => x.Id);
     }
 }
-
-

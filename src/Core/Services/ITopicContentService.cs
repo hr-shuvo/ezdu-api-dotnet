@@ -10,5 +10,6 @@ namespace Core.Services;
 public interface ITopicContentService : IBaseService<TopicContent>
 {
     Task<PagedList<TopicContent>> LoadAsync(TopicContentParams query);
+    Task<TopicContent> GetByIdAsync(long id, bool asTracking = false, bool withDeleted = false);
     Task<ApiResponse> SaveAsync(TopicContentDto dto);
 }

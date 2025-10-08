@@ -14,7 +14,7 @@ public class TopicContentService : BaseService<TopicContent>, ITopicContentServi
 {
     private readonly ITopicContentRepository _repository;
     private readonly ITopicService _topicService;
-    
+
     public TopicContentService(ITopicContentRepository repository, ITopicService topicService) : base(repository)
     {
         _repository = repository;
@@ -25,7 +25,6 @@ public class TopicContentService : BaseService<TopicContent>, ITopicContentServi
     {
         var query = _repository.Query(@params.WithDeleted);
 
-        // TODO: Add more filters as needed
         if (!string.IsNullOrWhiteSpace(@params.Search))
         {
             var search = @params.Search.Trim().ToLower();
@@ -33,21 +32,26 @@ public class TopicContentService : BaseService<TopicContent>, ITopicContentServi
                 x.Name.Contains(search, StringComparison.CurrentCultureIgnoreCase));
         }
 
+        if (@params.TopicId > 0)
+        {
+            query = query.Where(x => x.TopicId == @params.TopicId);
+        }
+
 
         if (@params.OrderBy != null)
         {
-            query = @params.SortBy.ToLower() switch
+            query = @params.OrderBy.ToLower() switch
             {
-                "name" => @params.OrderBy == "desc"
+                "name" => @params.SortBy == "desc"
                     ? query.OrderByDescending(x => x.Name)
                     : query.OrderBy(x => x.Name),
-                "createdat" => @params.OrderBy == "desc"
+                "createdat" => @params.SortBy == "desc"
                     ? query.OrderByDescending(x => x.CreatedAt)
                     : query.OrderBy(x => x.CreatedAt),
-                "updatedat" => @params.OrderBy == "desc"
+                "updatedat" => @params.SortBy == "desc"
                     ? query.OrderByDescending(x => x.UpdatedAt)
                     : query.OrderBy(x => x.UpdatedAt),
-                _ => query.OrderByDescending(x => x.CreatedAt)
+                _ => query.OrderByDescending(x => x.Id)
             };
         }
         else
@@ -62,12 +66,24 @@ public class TopicContentService : BaseService<TopicContent>, ITopicContentServi
         return new PagedList<TopicContent>(result.Items, result.Count, @params.PageNumber, @params.PageSize);
     }
 
+    public override async Task<TopicContent> GetByIdAsync(long id, bool asTracking = false, bool withDeleted = false)
+    {
+        var entity = await _repository.GetByIdAsync(id, false, withDeleted);
+        if (entity == null) throw new AppException(404, "Topic content not found");
+
+        var topic = await _topicService.GetByIdAsync(entity.TopicId, false, withDeleted);
+
+        entity.Topic = topic;
+
+        return entity;
+    }
+
     public async Task<ApiResponse> SaveAsync(TopicContentDto dto)
     {
         if (dto.TopicId > 0 && !await _topicService.ExistsAsync(dto.TopicId.Value))
             throw new AppException(404, "Topic not found");
-        
-        
+
+
         bool duplicateTitle;
 
         if (dto.Id > 0)
@@ -105,12 +121,8 @@ public class TopicContentService : BaseService<TopicContent>, ITopicContentServi
 
         return new ApiResponse(200, "Topic added successfully");
     }
-    
-    
-    
-    
-    
-    
+
+
     #region Private Methods
 
     private static TopicContent MapDtoToEntity(TopicContentDto dto, TopicContent entity = null)
@@ -120,9 +132,11 @@ public class TopicContentService : BaseService<TopicContent>, ITopicContentServi
         entity.Id = dto.Id;
         entity.Name = dto.Name;
 
+        entity.SubjectId = dto.SubjectId.Value;
+        entity.LessonId = dto.LessonId.Value;
         entity.TopicId = dto.TopicId.Value;
         entity.UpdatedAt = DateTime.UtcNow;
-        
+
         entity.Type = (ContentType)dto.Type;
         entity.Content = dto.Content;
         entity.Order = dto.Order;

@@ -15,6 +15,10 @@ public class TopicContentDto
     public int Order { get; set; }
     
     [Required]
+    public long? SubjectId { get; set; }
+    [Required]
+    public long? LessonId { get; set; }
+    [Required]
     public long? TopicId { get; set; }
 
     public int Status { get; set; }
