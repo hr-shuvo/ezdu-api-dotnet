@@ -41,8 +41,9 @@ public enum QuestionType
     Mcq = 1,
     TrueFalse,
     ShortAnswer,
-    Descriptive,
-    FillInTheBlank
+    FillInTheBlanks,
+    Matching,
+    Descriptive
 }
 
 public enum DifficultyLevel

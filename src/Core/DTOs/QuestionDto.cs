@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Core.Enums;
 
 namespace Core.DTOs;
 
@@ -8,7 +9,7 @@ public class QuestionDto
     public string Name { get; set; }
     
     [Range(0, 5)]
-    public int QuestionType { get; set; }
+    public QuestionType QuestionType { get; set; }
     public string Passage { get; set; }
     
     [Required]

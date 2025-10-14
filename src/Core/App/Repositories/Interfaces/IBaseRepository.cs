@@ -24,6 +24,7 @@ public interface IBaseRepository<T> where T :class, IBaseEntity
     Task<T> ToggleStatusAsync(long id);
 
     IQueryable<T> Query(bool withDeleted = false, bool asTracking = false);
+    Task<T> ExecuteAsync(IQueryable<T> query, bool withDeleted = false, bool asTracking = false);
     Task<(int Count, IEnumerable<T> Items)> ExecuteListAsync(IQueryable<T> queryable, int page = 1, int size = 10);
 
     Task<int> SaveChangesAsync();

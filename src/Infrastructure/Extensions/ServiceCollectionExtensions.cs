@@ -1,8 +1,8 @@
+using System.Text.Json.Serialization;
 using Core.App.Repositories.Interfaces;
 using Core.App.Services;
 using Core.App.Services.Identity;
 using Core.App.Services.Interfaces;
-using Core.App.Utils;
 using Core.Shared.Services;
 using Core.Shared.Services.Interfaces;
 using Infrastructure.Core;
@@ -18,6 +18,12 @@ public static class ServiceCollectionExtensions
 {
     public static void AddServiceCollections(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddControllers().AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+            options.JsonSerializerOptions.WriteIndented = true;
+        });
+        
         services.AddDatabaseServices(configuration);
         services.AddAuthenticationServices(configuration);
         services.AddConfigureServices(configuration);

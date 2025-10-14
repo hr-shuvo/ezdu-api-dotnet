@@ -186,6 +186,11 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class, IBaseEntity
         return query;
     }
 
+    public async Task<T> ExecuteAsync(IQueryable<T> query, bool withDeleted = false, bool asTracking = false)
+    {
+        return await query.FirstOrDefaultAsync();
+    }
+
     public async Task<(int Count, IEnumerable<T> Items)> ExecuteListAsync(IQueryable<T> queryable, int page = 1, int size = 10)
     {
         var count = await queryable.CountAsync();

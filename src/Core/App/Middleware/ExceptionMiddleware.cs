@@ -72,7 +72,7 @@ public class ExceptionMiddleware
 
             var response = _env.IsDevelopment()
                 ? new ApiExceptionResponse(context.Response.StatusCode, message, ex.StackTrace)
-                : new ApiExceptionResponse(context.Response.StatusCode, "Internal Server Error");
+                : new ApiExceptionResponse(context.Response.StatusCode, message);
 
             var json = JsonSerializer.Serialize(response, options);
 

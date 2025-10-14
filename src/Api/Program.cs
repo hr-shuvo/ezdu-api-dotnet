@@ -1,14 +1,8 @@
 using Core.App.Middleware;
-using Core.App.Services.Interfaces;
-using Core.App.Utils;
-using Infrastructure.Data;
-using Infrastructure.Data.Seeds;
 using Infrastructure.Extensions;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddServiceCollections(builder.Configuration);

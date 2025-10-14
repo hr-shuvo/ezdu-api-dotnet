@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Core.App.Services;
 using Core.App.Utils;
 using Core.DTOs;
@@ -35,7 +36,7 @@ public class QuestionService : BaseService<Question>, IQuestionService
     public async Task<PagedList<Question>> LoadAsync(QuestionParams @params)
     {
         int maxOptionSize = @params.PageSize * 10;
-        
+
         var query = _repository.Query(@params.WithDeleted);
 
         // TODO: Add more filters as needed
@@ -49,15 +50,15 @@ public class QuestionService : BaseService<Question>, IQuestionService
 
         if (@params.OrderBy != null)
         {
-            query = @params.SortBy.ToLower() switch
+            query = @params.OrderBy.ToLower() switch
             {
-                "name" => @params.OrderBy == "desc"
+                "name" => @params.SortBy == "desc"
                     ? query.OrderByDescending(x => x.Name)
                     : query.OrderBy(x => x.Name),
-                "createdat" => @params.OrderBy == "desc"
+                "createdat" => @params.SortBy == "desc"
                     ? query.OrderByDescending(x => x.CreatedAt)
                     : query.OrderBy(x => x.CreatedAt),
-                "updatedat" => @params.OrderBy == "desc"
+                "updatedat" => @params.SortBy == "desc"
                     ? query.OrderByDescending(x => x.UpdatedAt)
                     : query.OrderBy(x => x.UpdatedAt),
                 _ => query.OrderByDescending(x => x.Id)
@@ -87,6 +88,21 @@ public class QuestionService : BaseService<Question>, IQuestionService
         }
 
         return new PagedList<Question>(questionList, result.Count, @params.PageNumber, @params.PageSize);
+    }
+
+    public override async Task<Question> GetByIdAsync(long id, bool asTracking = false, bool withDeleted = false)
+    {
+        var query = _repository.Query(withDeleted);
+
+        query = query.Where(x => x.Id == id);
+
+        var entity = await _repository.ExecuteAsync(query);
+        if (entity == null) throw new AppException(404, "Topic content not found");
+
+        var options = await _optionRepository.LoadOptionsByQuestionIdAsync(id);
+        entity.Options = options;
+
+        return entity;
     }
 
     public async Task<ApiResponse> SaveAsync(QuestionDto dto)
@@ -133,18 +149,81 @@ public class QuestionService : BaseService<Question>, IQuestionService
 
             if (dto.Id > 0)
             {
+                //todo - fix for update questions
                 var existingEntity = await _repository.GetByIdAsync(dto.Id);
 
                 if (existingEntity is null)
-                    throw new AppException(404, "Subject not found");
+                    throw new AppException(404, "Question not found");
 
-                if (existingEntity.Name != dto.Name)
+                if (existingEntity.Name != dto.Name && existingEntity.Id != dto.Id)
                 {
                     duplicateTitle = await _repository.ExistsAsync(x => x.Name == dto.Name);
 
                     if (duplicateTitle)
-                        throw new AppException(400, "A Subject with this title already exists");
+                        throw new AppException(400, "A Question with this title already exists");
                 }
+
+                // var invalidOptions = dto.Options.Where(x => x.QuestionId != dto.Id).ToList();
+
+                if (dto.Options.Any(x => x.QuestionId != dto.Id && (x.Id  > 0)))
+                {
+                    throw new AppException(400, $"Invalid options found");
+                }
+
+
+                // update options
+                // var optionsQuery = _optionRepository.Query(true, true).Where(x => x.QuestionId == dto.Id);
+                var optionEntities = await _optionRepository.LoadOptionsByQuestionIdAsync(dto.Id, asTracking: true);
+
+                if (optionEntities.Count > 10)
+                {
+                    throw new AppException(409, "Too many options, Delete this question");
+                }
+
+                var optionsToUpdate = new List<Option>();
+                var optionsToDelete = new List<Option>();
+                var optionsToCreate = new List<Option>();
+                foreach (var option in optionEntities)
+                {
+                    var optionDto = dto.Options.FirstOrDefault(x => x.Id == option.Id);
+                    if (optionDto == null)
+                    {
+                        optionsToDelete.Add(option);
+                        continue;
+                    }
+                    
+                    if (option.Name != optionDto.Name || option.IsCorrect != optionDto.IsCorrect)
+                    {
+                        option.Name = optionDto.Name;
+                        option.IsCorrect = optionDto.IsCorrect;
+                        option.UpdatedAt = DateTime.UtcNow;
+                        optionsToUpdate.Add(option);
+                    }
+                }
+                
+                foreach (var dtoOption in dto.Options)
+                {
+                    var exists = optionEntities.Any(x => x.Id == dtoOption.Id);
+                    if (!exists)
+                    {
+                        optionsToCreate.Add(new Option
+                        {
+                            QuestionId = dto.Id,
+                            Name = dtoOption.Name,
+                            IsCorrect = dtoOption.IsCorrect,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        });
+                    }
+                }
+                
+                if(optionsToUpdate.Any())
+                    await _optionRepository.UpdateRangeAsync(optionsToUpdate);
+                if (optionsToDelete.Any())
+                    await _optionRepository.DeleteRangeAsync(optionsToDelete);
+                if(optionsToCreate.Any())
+                    await _optionRepository.AddRangeAsync(optionsToCreate);
+
 
                 MapDtoToEntity(dto, existingEntity);
 
@@ -153,13 +232,13 @@ public class QuestionService : BaseService<Question>, IQuestionService
 
                 await transaction.CommitAsync();
 
-                return new ApiResponse(200, "Subject updated successfully");
+                return new ApiResponse(200, "Question updated successfully");
             }
 
             duplicateTitle = await _repository.ExistsAsync(x => x.Name == dto.Name);
 
             if (duplicateTitle)
-                throw new AppException(400, "A Subject with this title already exists");
+                throw new AppException(400, "A Question with this title already exists");
 
             var newEntity = MapDtoToEntity(dto);
 
@@ -168,15 +247,15 @@ public class QuestionService : BaseService<Question>, IQuestionService
 
             var options = MapOptionDtoToEntityList(dto.Options, newEntity.Id);
 
-            var optionEntities = await _optionRepository.AddRangeAsync(options);
+            await _optionRepository.AddRangeAsync(options);
 
             await _repository.SaveChangesAsync();
 
             await transaction.CommitAsync();
 
-            return new ApiResponse(200, "Subject added successfully");
+            return new ApiResponse(200, "Question added successfully");
         }
-        catch 
+        catch
         {
             await transaction.RollbackAsync();
             throw;
@@ -208,14 +287,14 @@ public class QuestionService : BaseService<Question>, IQuestionService
         entity.LessonId = dto.LessonId.Value;
         entity.TopicId = dto.TopicId.Value;
 
-        entity.QuestionType = (QuestionType)dto.QuestionType;
+        entity.QuestionType = dto.QuestionType;
         entity.Passage = dto.Passage;
         entity.DifficultyLevel = (DifficultyLevel)dto.DifficultyLevel;
         entity.Marks = dto.Marks;
         // entity.Tags = dto.Tags;
         entity.Hint = dto.Hint;
         entity.Explanation = dto.Explanation;
-        
+
         if (entity.Id > 0)
         {
             entity.UpdatedBy = UserContext.UserId;
@@ -243,7 +322,7 @@ public class QuestionService : BaseService<Question>, IQuestionService
         return dtoOptions.Select(option => new Option
         {
             Id = option.Id,
-            Name = option.Text,
+            Name = option.Name,
             QuestionId = questionId,
             IsCorrect = option.IsCorrect
         }).ToList();
