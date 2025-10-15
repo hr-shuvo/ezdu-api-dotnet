@@ -20,6 +20,7 @@ public static class AppDependencyExtensions
         services.AddScoped<ISubjectService, SubjectService>();
         services.AddScoped<ITopicContentService, TopicContentService>();
         services.AddScoped<ITopicService, TopicService>();
+        services.AddScoped<IQuizService, QuizService>();
         
         
         
@@ -34,6 +35,7 @@ public static class AppDependencyExtensions
         services.AddScoped<ITopicRepository, TopicRepository>();
         services.AddScoped<IOptionRepository, OptionRepository>(); // note: no service used
 
+        services.AddScoped<IQuizRepository, QuizRepository>();
 
     }
 }

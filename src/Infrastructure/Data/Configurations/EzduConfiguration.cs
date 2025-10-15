@@ -173,6 +173,16 @@ public class QuestionConfiguration : IEntityTypeConfiguration<Question>
     }
 }
 
+public class QuizQuestionConfiguration : IEntityTypeConfiguration<QuizQuestion>
+{
+    public void Configure(EntityTypeBuilder<QuizQuestion> builder)
+    {
+        builder.HasKey(x => new { x.QuizId, x.QuestionId });
+        
+        builder.HasIndex(x => x.QuizId);
+    }
+}
+
 public class OptionConfiguration : IEntityTypeConfiguration<Option>
 {
     public void Configure(EntityTypeBuilder<Option> builder)
