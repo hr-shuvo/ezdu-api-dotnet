@@ -32,6 +32,5 @@ public class QuestionDto
     public string Explanation { get; set; }
 
 
-
     public ICollection<OptionDto> Options { get; set; } = [];
 }

@@ -32,6 +32,13 @@ public class QuizzesController : BaseApiController
         var classEntity = await _quizService.GetByIdAsync(id);
         return Ok(classEntity);
     }
+    
+    [HttpGet("details/{id:long}")]
+    public async Task<IActionResult> GetDetails(long id)
+    {
+        var classEntity = await _quizService.GetByIdWithQuestionsAsync(id);
+        return Ok(classEntity);
+    }
 
 
     [HttpPost("save")]

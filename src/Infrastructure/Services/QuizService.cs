@@ -9,6 +9,7 @@ using Core.QueryParams;
 using Core.Repositories;
 using Core.Services;
 using Core.Shared.Models.Pagination;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Services;
 
@@ -75,6 +76,27 @@ public class QuizService : BaseService<Quiz>, IQuizService
 
         return result;
     }
+
+    public async Task<QuizResponseDto> GetByIdWithQuestionsAsync(long id, bool asTracking = false, bool withDeleted = false)
+    {
+        var result = await _quizRepository.GetByIdAsync(id, asTracking, withDeleted);
+
+        if (result == null)
+            throw new AppException(404, "Quiz not found");
+        
+        var quizQuestions = await _unitOfWork.QuizQuestions.GetByQuizIdAsync(id);
+        var questionIds = quizQuestions.Select(x => x.QuestionId).ToList();
+
+        var questions = await _unitOfWork.Repository<Question>().Query().Where(x => questionIds.Contains(x.Id))
+            .ToListAsync();
+        
+        var options = await _unitOfWork.Repository<Option>().Query().Where(x => questionIds.Contains(x.QuestionId)).ToListAsync();
+        
+        var quizDto = MapEntityToResponseDto(result, questions, options);
+        
+        return quizDto;
+    }
+    
 
     public async Task<ApiResponse> SaveAsync(QuizDto dto)
     {
@@ -152,6 +174,46 @@ public class QuizService : BaseService<Quiz>, IQuizService
         entity.EndTime = dto.EndTime.ToUtcSafe() ?? dto.StartTime.ToUtcSafe()?.AddMinutes(dto.DurationInMinutes);
 
         return entity;
+    }
+    
+    private static QuizResponseDto MapEntityToResponseDto(Quiz result, List<Question> questions, List<Option> options)
+    {
+        if (result == null) return null;
+        
+        var mappedQuestions = questions
+            .Select(q =>
+            {
+                q.Options = options
+                    .Where(o => o.QuestionId == q.Id)
+                    .ToList();
+
+                return q;
+            })
+            .ToList();
+        
+        var dto = new QuizResponseDto
+        {
+            Id = result.Id,
+            Name = result.Name,
+            Description = result.Description,
+            Type = result.Type,
+            TotalMarks = result.TotalMarks,
+            PassingMarks = result.PassingMarks,
+            DurationInMinutes = result.DurationInMinutes,
+            HasNegativeMarks = result.HasNegativeMarks,
+            StartTime = result.StartTime,
+            EndTime = result.EndTime,
+            Status = result.Status,
+            
+            CreatedAt = result.CreatedAt,
+            UpdatedAt = result.UpdatedAt,
+            CreatedBy = result.CreatedBy,
+            UpdatedBy = result.UpdatedBy,
+            
+            Questions = mappedQuestions,
+        };
+        
+        return dto;
     }
 
     private async Task HandleQuizQuestions(long quizId, ICollection<long> dtoQuestionIds)
