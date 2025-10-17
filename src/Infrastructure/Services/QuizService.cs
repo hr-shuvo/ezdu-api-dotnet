@@ -49,6 +49,8 @@ public class QuizService : BaseService<Quiz>, IQuizService
                 "updatedat" => @params.SortBy == "desc"
                     ? query.OrderByDescending(x => x.UpdatedAt)
                     : query.OrderBy(x => x.UpdatedAt),
+                "starttime" => query.OrderBy(x => x.StartTime < DateTime.UtcNow)
+                    .ThenByDescending(x => x.StartTime),
                 _ => query.OrderByDescending(x => x.Id)
             };
         }
@@ -70,10 +72,10 @@ public class QuizService : BaseService<Quiz>, IQuizService
 
         var quizQuestions = await _unitOfWork.QuizQuestions.GetByQuizIdAsync(id);
         result.Questions = quizQuestions;
-        
+
         return result;
     }
-    
+
     public async Task<ApiResponse> SaveAsync(QuizDto dto)
     {
         var transaction = await BeginTransactionAsync();
@@ -112,7 +114,7 @@ public class QuizService : BaseService<Quiz>, IQuizService
             duplicateName = await _quizRepository.ExistsAsync(x => x.Name == dto.Name);
 
             if (duplicateName)
-                throw new AppException(404, "A Quiz with this Name already exists");
+                throw new AppException(400, "A Quiz with this Name already exists");
 
             var newEntity = MapDtoToEntity(dto);
 
@@ -144,6 +146,7 @@ public class QuizService : BaseService<Quiz>, IQuizService
         entity.Type = dto.Type;
         entity.TotalMarks = dto.TotalMarks;
         entity.PassingMarks = dto.PassingMarks;
+        entity.DurationInMinutes = dto.DurationInMinutes;
         entity.HasNegativeMarks = dto.HasNegativeMarks;
         entity.StartTime = dto.StartTime.ToUtcSafe();
         entity.EndTime = dto.EndTime.ToUtcSafe() ?? dto.StartTime.ToUtcSafe()?.AddMinutes(dto.DurationInMinutes);

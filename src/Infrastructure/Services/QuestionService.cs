@@ -39,13 +39,20 @@ public class QuestionService : BaseService<Question>, IQuestionService
 
         var query = _repository.Query(@params.WithDeleted);
 
-        // TODO: Add more filters as needed
+
         if (!string.IsNullOrWhiteSpace(@params.Search))
         {
             var search = @params.Search.Trim().ToLower();
             query = query.Where(x =>
                 x.Name.Contains(search, StringComparison.CurrentCultureIgnoreCase));
         }
+
+        if (@params.SubjectId > 0)
+            query = query.Where(x => x.SubjectId == @params.SubjectId);
+        if (@params.LessonId > 0)
+            query = query.Where(x => x.LessonId == @params.LessonId);
+        if (@params.TopicId > 0)
+            query = query.Where(x => x.TopicId == @params.TopicId);
 
 
         if (@params.OrderBy != null)
@@ -165,7 +172,7 @@ public class QuestionService : BaseService<Question>, IQuestionService
 
                 // var invalidOptions = dto.Options.Where(x => x.QuestionId != dto.Id).ToList();
 
-                if (dto.Options.Any(x => x.QuestionId != dto.Id && (x.Id  > 0)))
+                if (dto.Options.Any(x => x.QuestionId != dto.Id && (x.Id > 0)))
                 {
                     throw new AppException(400, $"Invalid options found");
                 }
@@ -191,7 +198,7 @@ public class QuestionService : BaseService<Question>, IQuestionService
                         optionsToDelete.Add(option);
                         continue;
                     }
-                    
+
                     if (option.Name != optionDto.Name || option.IsCorrect != optionDto.IsCorrect)
                     {
                         option.Name = optionDto.Name;
@@ -200,7 +207,7 @@ public class QuestionService : BaseService<Question>, IQuestionService
                         optionsToUpdate.Add(option);
                     }
                 }
-                
+
                 foreach (var dtoOption in dto.Options)
                 {
                     var exists = optionEntities.Any(x => x.Id == dtoOption.Id);
@@ -216,12 +223,12 @@ public class QuestionService : BaseService<Question>, IQuestionService
                         });
                     }
                 }
-                
-                if(optionsToUpdate.Any())
+
+                if (optionsToUpdate.Any())
                     await _optionRepository.UpdateRangeAsync(optionsToUpdate);
                 if (optionsToDelete.Any())
                     await _optionRepository.DeleteRangeAsync(optionsToDelete);
-                if(optionsToCreate.Any())
+                if (optionsToCreate.Any())
                     await _optionRepository.AddRangeAsync(optionsToCreate);
 
 
