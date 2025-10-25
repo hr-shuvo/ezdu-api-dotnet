@@ -6,6 +6,7 @@ using Core.Repositories;
 using Infrastructure.Core.Repositories;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Infrastructure.Core;
 
@@ -49,8 +50,12 @@ public class UnitOfWork : IUnitOfWork
     {
         return await _context.SaveChangesAsync();
     }
-    
-    
+
+    public async Task<IDbContextTransaction> BeginTransactionAsync()
+    {
+        return await _context.Database.BeginTransactionAsync();
+    }
+
 
     #region Composit Key Entities
 

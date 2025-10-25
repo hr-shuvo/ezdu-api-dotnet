@@ -8,7 +8,7 @@ public enum Segment
     Hsc,
     Admission,
     Job,
-    Others
+    InternationalExam
 }
 
 public enum Group

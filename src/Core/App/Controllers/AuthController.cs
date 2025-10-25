@@ -100,7 +100,6 @@ public class AuthController : BaseApiController
     {
         var user = await _authService.RegisterAsync(registerDto);
 
-
         return Ok(user);
     }
 

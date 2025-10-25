@@ -1,8 +1,8 @@
 namespace Core.Enums;
 
-public enum UserType
+public enum ModuleType
 {
-    Student = 1,
-    Admission,
+    Student,
     JobSeeker,
+    InternationalExam
 }

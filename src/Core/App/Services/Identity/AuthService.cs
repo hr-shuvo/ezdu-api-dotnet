@@ -3,6 +3,8 @@ using Core.App.DTOs.Auth;
 using Core.App.Entities.Identity;
 using Core.App.Services.Interfaces;
 using Core.App.Utils;
+using Core.Entities;
+using Core.Enums;
 using Core.Errors;
 using Core.Extensions;
 using Core.Shared.Models.Messaging;
@@ -19,6 +21,7 @@ public class AuthService : IAuthService
     private readonly SignInManager<AppUser> _signInManager;
     private readonly ITokenService _tokenService;
     private readonly ILogger<AuthService> _logger;
+    private readonly IUnitOfWork _unitOfWork;
 
     private readonly IEmailService _emailService;
 
@@ -27,13 +30,14 @@ public class AuthService : IAuthService
         SignInManager<AppUser> signInManager,
         ITokenService tokenService,
         ILogger<AuthService> logger,
-        IEmailService emailService)
+        IEmailService emailService, IUnitOfWork unitOfWork)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _tokenService = tokenService;
         _logger = logger;
         _emailService = emailService;
+        _unitOfWork = unitOfWork;
     }
 
 
@@ -126,6 +130,7 @@ public class AuthService : IAuthService
 
     public async Task<UserAuthDto> RegisterAsync(RegisterDto registerDto)
     {
+        var transaction = await _unitOfWork.BeginTransactionAsync();
         try
         {
             var existingUser = await _userManager.FindByEmailAsync(registerDto.Email);
@@ -138,8 +143,8 @@ public class AuthService : IAuthService
             var user = new AppUser
             {
                 Email = registerDto.Email,
-                UserName = registerDto.Email,
-                Firstname = registerDto.Username
+                UserName = registerDto.Username ?? registerDto.Email,
+                Firstname = registerDto.Username ?? registerDto.Email,
             };
 
             var result = await _userManager.CreateAsync(user, registerDto.Password);
@@ -149,12 +154,53 @@ public class AuthService : IAuthService
                 throw new AppException(400);
             }
 
+            var profile = registerDto.Profile;
+            if (!profile.ClassId.HasValue)
+            {
+                throw new AppException(400, "Profile is invalid");
+            }
+
+            var _class = await _unitOfWork.Repository<Class>().GetByIdAsync(profile.ClassId.Value);
+            if (_class is null)
+            {
+                throw new AppException(404, "Class not found");
+            }
+
+            var userProfile = new UserProfile(user.Id)
+            {
+                Segment = _class.Segment,
+                ClassId = _class.Id,
+                ClassName = _class.Name,
+                Group = _class.Groups != null ? _class.Groups.Contains(profile.Group) ? profile.Group : null : null,
+                // Group = _class.Groups.Contains(profile.Group) ? profile.Group : null,
+                ExamType = _class.Segment switch
+                {
+                    Segment.Admission => "Admission",
+                    Segment.Hsc => "HSC",
+                    Segment.Ssc => "SSC",
+                    Segment.Junior => "Junior",
+                    Segment.Primary => "Primary",
+                    Segment.Job => "Job",
+                    Segment.InternationalExam => "InternationalExam",
+                    _ => null
+                },
+                ExamYear = profile.ExamYear,
+                InstituteId = profile.InstituteId ?? 0,
+                Institute = "",
+                TargetScore = profile.TargetScore ?? 0,
+            };
+
+            var profileCreated = await _unitOfWork.Repository<UserProfile>().AddAsync(userProfile);
+            await _unitOfWork.CompleteAsync();
+
             var userDto = await ToUserAuthDto(user);
 
+            await transaction.CommitAsync();
             return userDto;
         }
         catch (Exception ex)
         {
+            await transaction.RollbackAsync();
             _logger.LogError(ex, "Unexpected error during user registration for email: {Email}",
                 registerDto.Email);
 
@@ -207,7 +253,7 @@ public class AuthService : IAuthService
     #endregion
 
 
-    #region OPT Methods
+    #region OTP Methods
 
     public async Task<string> SendOtpAsync(SendOtpDto request)
     {
@@ -376,7 +422,7 @@ public class AuthService : IAuthService
 
         return userDto;
     }
-    
+
     private async Task<AppUser> GetUserByRecipient(string recipient)
     {
         if (Helper.IsValidEmail(recipient))

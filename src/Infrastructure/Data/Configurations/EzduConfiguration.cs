@@ -299,3 +299,14 @@ public class ProgressConfiguration : IEntityTypeConfiguration<Progress>
         builder.HasKey(x => x.Id);
     }
 }
+
+public class UserProfileConfiguration : IEntityTypeConfiguration<UserProfile>
+{
+    public void Configure(EntityTypeBuilder<UserProfile> builder)
+    {
+        builder.HasKey(x => x.UserId);
+        builder.Property(x => x.Id).ValueGeneratedNever();
+        
+        builder.Property(x => x.ClassName).IsRequired().HasMaxLength(250);
+    }
+}
