@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Core.App.Services;
 using Core.App.Utils;
 using Core.DTOs;
@@ -22,18 +23,80 @@ public class ClassService : BaseService<Class>, IClassService
 
     public async Task<PagedList<Class>> LoadAsync(ClassParams @params)
     {
-        // var result = await _classRepository.LoadAsync(query);
-
         var query = _classRepository.Query(@params.WithDeleted);
 
-        // TODO: Add more filters as needed
         if (!string.IsNullOrWhiteSpace(@params.Search))
         {
             var search = @params.Search.Trim().ToLower();
             query = query.Where(x =>
-                x.Name.ToLower().Contains(search) || (x.Groups != null && x.Groups.ToLower().Contains(search)));
+                x.Name.Contains(search, StringComparison.CurrentCultureIgnoreCase) ||
+                (x.Groups != null && x.Groups.ToLower().Contains(search)));
         }
 
+        if (@params.Segment is not null)
+        {
+            query = query.Where(x => x.Segment == @params.Segment);
+        }
+
+
+        if (@params.OrderBy != null)
+        {
+            query = @params.OrderBy.ToLower() switch
+            {
+                "name" => @params.SortBy == "desc"
+                    ? query.OrderByDescending(x => x.Name)
+                    : query.OrderBy(x => x.Name),
+                "createdat" => @params.SortBy == "desc"
+                    ? query.OrderByDescending(x => x.CreatedAt)
+                    : query.OrderBy(x => x.CreatedAt),
+                "updatedat" => @params.SortBy == "desc"
+                    ? query.OrderByDescending(x => x.UpdatedAt)
+                    : query.OrderBy(x => x.UpdatedAt),
+                _ => query.OrderByDescending(x => x.Id)
+            };
+        }
+        else
+        {
+            query = @params.SortBy == "desc"
+                ? query.OrderByDescending(x => x.CreatedAt)
+                : query.OrderBy(x => x.CreatedAt);
+        }
+
+        var result = await _classRepository.ExecuteListAsync(query, @params.PageNumber, @params.PageSize);
+
+        return new PagedList<Class>(result.Items, result.Count, @params.PageNumber, @params.PageSize);
+    }
+
+    public async Task<PagedList<Class>> LoadForOnboardingAsync(ClassParams @params)
+    {
+        var query = _classRepository.Query(@params.WithDeleted);
+
+        if (!string.IsNullOrWhiteSpace(@params.Search))
+        {
+            var search = @params.Search.Trim().ToLower();
+            query = query.Where(x =>
+                x.Name.Contains(search, StringComparison.CurrentCultureIgnoreCase) ||
+                (x.Groups != null && x.Groups.ToLower().Contains(search)));
+        }
+
+        if (@params.Segment is not null)
+        {
+            switch (@params.Segment)
+            {
+                case (Segment)1:
+                    query = query.Where(x =>
+                        x.Segment == Segment.Primary || x.Segment == Segment.Junior || x.Segment == Segment.Ssc ||
+                        x.Segment == Segment.Hsc || x.Segment == Segment.Admission);
+
+                    break;
+                case (Segment)2:
+                    query = query.Where(x => x.Segment == Segment.Job);
+                    break;
+                case (Segment)3:
+                    query = query.Where(x => x.Segment == Segment.InternationalExam);
+                    break;
+            }
+        }
 
         if (@params.OrderBy != null)
         {

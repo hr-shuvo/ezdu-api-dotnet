@@ -90,4 +90,20 @@ public class ClassesController : BaseApiController
         
         return Ok(result);
     }
+
+
+
+
+    #region Select List
+
+    [AllowAnonymous]
+    [HttpGet("onboarding")]
+    public async Task<IActionResult> GetOnboardClassList([FromQuery] ClassParams query)
+    {
+        var classes = await _classService.LoadForOnboardingAsync(query);
+
+        return Ok(classes);
+    }
+
+    #endregion
 }
