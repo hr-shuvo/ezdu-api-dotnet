@@ -10,7 +10,7 @@ namespace Core.Services;
 public interface IQuestionService : IBaseService<Question>
 {
     Task<PagedList<Question>> LoadAsync(QuestionParams query);
-    Task<Question> GetByIdAsync(long id, bool asTracking = false, bool withDeleted = false);
+    new Task<Question> GetByIdAsync(long id, bool asTracking = false, bool withDeleted = false);
     Task<ApiResponse> SaveAsync(QuestionDto dto);
     Task<ApiResponse> UpdateOptionAsync(long questionId, long optionId, OptionDto dto);
     Task<int> RemoveOptionImage(long questionId, long optionId);

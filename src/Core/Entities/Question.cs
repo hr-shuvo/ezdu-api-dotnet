@@ -31,4 +31,9 @@ public class Question : BaseEntity
     public ICollection<Answer> Answers { get; set; } = [];
     public ICollection<QuestionReference> References { get; set; } = [];
     
+    /// <summary>
+    /// Exam Archive, Question Bank
+    /// </summary>
+    public long ExamId { get; set; }
+    
 }

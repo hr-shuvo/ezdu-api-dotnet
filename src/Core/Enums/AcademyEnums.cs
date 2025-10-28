@@ -28,22 +28,20 @@ public enum ContentType
     Others
 }
 
-public enum QuizType
-{
-    Mcq = 1,
-    TrueFalse,
-    ShortAnswer,
-    Descriptive
-}
+// public enum QuizType
+// {
+//     Mcq = 1,
+//     Cq,
+//     ShortAnswer,
+//     FillInTheBlanks
+// }
 
 public enum QuestionType
 {
     Mcq = 1,
-    TrueFalse,
+    Cq,
     ShortAnswer,
     FillInTheBlanks,
-    Matching,
-    Descriptive
 }
 
 public enum DifficultyLevel

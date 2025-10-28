@@ -243,6 +243,17 @@ public class QuestionReferenceConfiguration : IEntityTypeConfiguration<QuestionR
     }
 }
 
+public class ExamArchiveConfiguration : IEntityTypeConfiguration<ExamArchive>
+{
+    public void Configure(EntityTypeBuilder<ExamArchive> builder)
+    {
+        builder.HasKey(x => x.Id);
+
+        builder.HasIndex(x => x.SubjectId);
+        builder.HasIndex(x => x.InstituteId);
+    }
+} 
+
 public class InstituteConfiguration : IEntityTypeConfiguration<Institute>
 {
     public void Configure(EntityTypeBuilder<Institute> builder)
