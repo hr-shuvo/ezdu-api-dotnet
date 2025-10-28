@@ -10,7 +10,7 @@ public static class AppDependencyExtensions
 {
     public static void AddAppDependencyInjections(this IServiceCollection services)
     {
-        
+        // Services
         services.AddScoped<IAchievementService, AchievementService>();
         services.AddScoped<IAssignmentService, AssignmentService>();
         services.AddScoped<IClassService, ClassService>();
@@ -21,9 +21,11 @@ public static class AppDependencyExtensions
         services.AddScoped<ITopicContentService, TopicContentService>();
         services.AddScoped<ITopicService, TopicService>();
         services.AddScoped<IQuizService, QuizService>();
+        services.AddScoped<IExamArchiveService, ExamArchiveService>();
         
         
         
+        // Repositories
         services.AddScoped<IAchievementRepository, AchievementRepository>();
         services.AddScoped<IAssignmentRepository, AssignmentRepository>();
         services.AddScoped<IClassRepository, ClassRepository>();
