@@ -4,7 +4,6 @@ namespace Core.DTOs;
 
 public class ExamArchiveDto
 {
-    
     public long Id { get; set; }
     [Required]
     public string Name { get; set; }

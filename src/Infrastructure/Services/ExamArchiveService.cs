@@ -13,10 +13,13 @@ namespace Infrastructure.Services;
 public class ExamArchiveService : BaseService<ExamArchive>, IExamArchiveService
 {
     private readonly IBaseRepository<ExamArchive> _repository;
+    private readonly IQuestionService _questionService;
 
-    public ExamArchiveService(IBaseRepository<ExamArchive> repository) : base(repository)
+    public ExamArchiveService(IBaseRepository<ExamArchive> repository, IQuestionService questionService) :
+        base(repository)
     {
         _repository = repository;
+        _questionService = questionService;
     }
 
     public async Task<PagedList<ExamArchive>> LoadAsync(ExamArchiveParams @params)
@@ -87,7 +90,14 @@ public class ExamArchiveService : BaseService<ExamArchive>, IExamArchiveService
         var entity = await _repository.ExecuteAsync(query);
         if (entity == null) throw new AppException(404, "Exam not found");
 
-        // todo: load questions->options for the exam
+        var questions = await _questionService.LoadAsync(new QuestionParams()
+        {
+            PageSize = 200,
+            ExamId = id,
+            SortBy = "asc"
+        });
+        
+        entity.Questions = questions.Items;
 
         return entity;
     }

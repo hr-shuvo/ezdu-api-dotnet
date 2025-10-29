@@ -1,5 +1,4 @@
 using Core.App.DTOs.Common;
-
 namespace Core.Entities;
 
 /// <summary>
@@ -15,4 +14,6 @@ public class ExamArchive : BaseEntity
 
     public long InstituteId { get; set; }
     public int Year { get; set; }
+
+    public ICollection<Question> Questions { get; set; }
 }

@@ -53,7 +53,10 @@ public class QuestionService : BaseService<Question>, IQuestionService
             query = query.Where(x => x.LessonId == @params.LessonId);
         if (@params.TopicId > 0)
             query = query.Where(x => x.TopicId == @params.TopicId);
-
+        if (@params.ExamId > 0)
+        {
+            query = query.Where(x => x.ExamId == @params.ExamId);
+        }
 
         if (@params.OrderBy != null)
         {
@@ -92,7 +95,11 @@ public class QuestionService : BaseService<Question>, IQuestionService
         foreach (var question in questionList)
         {
             question.Options = optionGroups.TryGetValue(question.Id, out var options) ? options : [];
+            // question.Explanation = ""; // todo: load explanation (only if premium user)
         }
+        
+        // todo: get answers (only if premium user)
+        
 
         return new PagedList<Question>(questionList, result.Count, @params.PageNumber, @params.PageSize);
     }
@@ -280,6 +287,17 @@ public class QuestionService : BaseService<Question>, IQuestionService
         throw new NotImplementedException();
     }
 
+    // public async Task<PagedList<Question>> LoadQuestionsByExamIdAsync(long examId, bool withOptions = false)
+    // {
+    //     var query = _repository.Query().Where(x => x.ExamId == examId);
+    //
+    //     var result = await _repository.ExecuteListAsync(query, 1, 200); // max 200 for bcs
+    //     
+    //     var questionIds = result.Items.Select(x => x.Id).ToList();
+    //     var optionQuery = _optionRepository.Query(true)
+    //         .Where(x => questionIds.Contains(x.QuestionId));
+    // }
+
     #region Private Methods
 
     private static Question MapDtoToEntity(QuestionDto dto, Question entity = null)
@@ -290,9 +308,11 @@ public class QuestionService : BaseService<Question>, IQuestionService
         entity.Name = dto.Name;
         entity.UpdatedAt = DateTime.UtcNow;
 
-        entity.SubjectId = dto.SubjectId.Value;
-        entity.LessonId = dto.LessonId.Value;
-        entity.TopicId = dto.TopicId.Value;
+        entity.SubjectId = dto.SubjectId ?? 0;
+        entity.LessonId = dto.LessonId ?? 0;
+        entity.TopicId = dto.TopicId ?? 0;
+
+        entity.ExamId = dto.ExamId ?? 0;
 
         entity.QuestionType = dto.QuestionType;
         entity.Passage = dto.Passage;

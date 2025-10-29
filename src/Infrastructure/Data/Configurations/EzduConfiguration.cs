@@ -153,7 +153,7 @@ public class QuestionConfiguration : IEntityTypeConfiguration<Question>
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(x => x.Options)
-            .WithOne(x => x.Question)
+            .WithOne()
             .HasForeignKey(x => x.QuestionId)
             .OnDelete(DeleteBehavior.Cascade);
 

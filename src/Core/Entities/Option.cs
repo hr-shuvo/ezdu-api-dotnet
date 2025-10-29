@@ -7,5 +7,5 @@ public class Option : BaseEntity
     public bool IsCorrect { get; set; }
 
     public long QuestionId { get; set; }
-    public Question Question { get; set; }
+    // public Question Question { get; set; }
 }

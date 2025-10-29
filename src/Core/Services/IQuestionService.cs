@@ -14,4 +14,6 @@ public interface IQuestionService : IBaseService<Question>
     Task<ApiResponse> SaveAsync(QuestionDto dto);
     Task<ApiResponse> UpdateOptionAsync(long questionId, long optionId, OptionDto dto);
     Task<int> RemoveOptionImage(long questionId, long optionId);
+    
+    // Task<PagedList<Question>> LoadQuestionsByExamIdAsync(long examId, bool withOptions = false);
 }

@@ -10,7 +10,7 @@ public interface IBaseService<TEntity> where TEntity : class, IBaseEntity
     Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> predicate = null, bool asTracking = false, bool withDeleted = false);
 
     // Task<IEnumerable<TEntity>> LoadAsync(int page, int size, Expression<Func<TEntity, bool>> predicate = null);
-    Task<(int, IEnumerable<TEntity>)> LoadAsync(int page = 1, int size = 10,
+    Task<(int Count, IEnumerable<TEntity> Items)> LoadAsync(int page = 1, int size = 10,
         Expression<Func<TEntity, bool>> predicate = null);
 
     Task<TEntity> AddAsync(TEntity entity);
