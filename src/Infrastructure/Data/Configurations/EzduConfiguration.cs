@@ -178,7 +178,7 @@ public class QuizQuestionConfiguration : IEntityTypeConfiguration<QuizQuestion>
     public void Configure(EntityTypeBuilder<QuizQuestion> builder)
     {
         builder.HasKey(x => new { x.QuizId, x.QuestionId });
-        
+
         builder.HasIndex(x => x.QuizId);
     }
 }
@@ -252,7 +252,7 @@ public class ExamArchiveConfiguration : IEntityTypeConfiguration<ExamArchive>
         builder.HasIndex(x => x.SubjectId);
         builder.HasIndex(x => x.InstituteId);
     }
-} 
+}
 
 public class InstituteConfiguration : IEntityTypeConfiguration<Institute>
 {
@@ -308,6 +308,24 @@ public class ProgressConfiguration : IEntityTypeConfiguration<Progress>
     public void Configure(EntityTypeBuilder<Progress> builder)
     {
         builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Id).ValueGeneratedNever();
+        builder.Property(x => x.UserName).IsRequired().HasMaxLength(250);
+        builder.Property(x => x.UserImageUrl).IsRequired().HasMaxLength(500);
+
+        builder.Property(x => x.LastStreakDay).HasColumnType("date");
+    }
+}
+
+public class DailyXpConfiguration : IEntityTypeConfiguration<DailyXp>
+{
+    public void Configure(EntityTypeBuilder<DailyXp> builder)
+    {
+        builder.HasKey(x => x.Id);
+
+        builder.HasIndex(x => x.UserId);
+        
+        builder.Property(x => x.Day).HasColumnType("date");
     }
 }
 
@@ -317,7 +335,7 @@ public class UserProfileConfiguration : IEntityTypeConfiguration<UserProfile>
     {
         builder.HasKey(x => x.UserId);
         builder.Property(x => x.Id).ValueGeneratedNever();
-        
+
         builder.Property(x => x.ClassName).IsRequired().HasMaxLength(250);
     }
 }
