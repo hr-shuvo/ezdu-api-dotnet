@@ -9,11 +9,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace Api.Controllers;
 
 [Authorize]
-public class ExamArchivesController : BaseApiController
+public class ArchiveExamsController : BaseApiController
 {
     private readonly IExamArchiveService _examArchiveService;
 
-    public ExamArchivesController(IExamArchiveService examArchiveService)
+    public ArchiveExamsController(IExamArchiveService examArchiveService)
     {
         _examArchiveService = examArchiveService;
     }

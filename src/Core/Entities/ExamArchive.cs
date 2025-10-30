@@ -15,5 +15,5 @@ public class ExamArchive : BaseEntity
     public long InstituteId { get; set; }
     public int Year { get; set; }
 
-    public ICollection<Question> Questions { get; set; }
+    public ICollection<Question> Questions { get; set; } = [];
 }
