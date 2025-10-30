@@ -14,7 +14,7 @@ public class Progress: BaseEntity
     public DateTime LastStreakDay { get; set; }
     public int StreakCount { get; set; }
 
-    public ICollection<DailyXp> DailyXps { get; set; }
+    public ICollection<DailyXp> DailyXps { get; set; } = [];
 
     public Progress(long userId)
     {

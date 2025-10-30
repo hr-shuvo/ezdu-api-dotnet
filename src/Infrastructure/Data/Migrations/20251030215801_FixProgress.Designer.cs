@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251030192502_UpdateProgress")]
-    partial class UpdateProgress
+    [Migration("20251030215801_FixProgress")]
+    partial class FixProgress
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -615,7 +615,6 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("UserImageUrl")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("varchar(500)");
 

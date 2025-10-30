@@ -21,7 +21,7 @@ public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class,
         return await _repository.GetByIdAsync(id, asTracking, withDeleted);
     }
 
-    public async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> predicate, bool asTracking = false, bool withDeleted = false)
+    public virtual async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> predicate, bool asTracking = false, bool withDeleted = false)
     {
         return await _repository.GetAsync(predicate, asTracking, withDeleted);
     }

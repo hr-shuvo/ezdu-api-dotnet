@@ -311,7 +311,7 @@ public class ProgressConfiguration : IEntityTypeConfiguration<Progress>
 
         builder.Property(x => x.Id).ValueGeneratedNever();
         builder.Property(x => x.UserName).IsRequired().HasMaxLength(250);
-        builder.Property(x => x.UserImageUrl).IsRequired().HasMaxLength(500);
+        builder.Property(x => x.UserImageUrl).HasMaxLength(500);
 
         builder.Property(x => x.LastStreakDay).HasColumnType("date");
     }

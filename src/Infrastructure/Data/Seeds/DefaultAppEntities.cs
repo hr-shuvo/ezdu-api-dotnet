@@ -19,11 +19,18 @@ public class DefaultAppEntities
 
         if (!await classRepo.ExistsAsync())
         {
-            for (var i = 12; i > 0; i--)
+            for (var i = 12; i > 5; i--)
             {
+                if (i is 11 or 9) continue;
+
                 var classEntity = new Class()
                 {
-                    Name = "Class " + i,
+                    Name = i switch
+                    {
+                        10 => "SSC",
+                        12 => "HSC",
+                        _ => "Class " + i
+                    },
                     Segment = i > 10 ? Segment.Hsc :
                         i > 8 ? Segment.Ssc :
                         i > 5 ? Segment.Junior : Segment.Primary
@@ -82,7 +89,6 @@ public class DefaultAppEntities
                         Code = name.ToLower().Replace(" ", "") + classEntity.Id,
                         Segment = classEntity.Segment,
                         ClassId = classEntity.Id,
-                        
                     };
 
                     await _unitOfWork.Repository<Subject>().AddAsync(subjectEntity);
@@ -191,9 +197,8 @@ public class DefaultAppEntities
             await AddTopicContent(topic);
         }
     }
-    
-    
-    
+
+
     private async Task AddTopicContent(Topic topic)
     {
         const int contentCount = 100;
@@ -256,6 +261,4 @@ public class DefaultAppEntities
             await _unitOfWork.CompleteAsync();
         }
     }
-
-
 }
