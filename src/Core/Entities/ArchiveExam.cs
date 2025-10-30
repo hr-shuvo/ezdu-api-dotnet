@@ -7,7 +7,7 @@ namespace Core.Entities;
 /// Subject: Physics, Bangla, English, General Knowledge, etc.
 /// Institute: Dinajpur Board, Dhaka University, Rangpur Zilla School, etc.
 /// </summary>
-public class ExamArchive : BaseEntity
+public class ArchiveExam : BaseEntity
 {
     public long ClassId { get; set; }
     public long SubjectId { get; set; }

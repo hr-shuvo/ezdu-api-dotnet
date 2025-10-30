@@ -7,9 +7,9 @@ using Core.Shared.Models.Pagination;
 
 namespace Core.Services;
 
-public interface IExamArchiveService : IBaseService<ExamArchive>
+public interface IExamArchiveService : IBaseService<ArchiveExam>
 {
-    Task<PagedList<ExamArchive>> LoadAsync(ExamArchiveParams query);
-    Task<ExamArchive> GetByIdAsync(long id);
+    Task<PagedList<ArchiveExam>> LoadAsync(ExamArchiveParams query);
+    Task<ArchiveExam> GetByIdAsync(long id);
     Task<ApiResponse> SaveAsync(ExamArchiveDto classDto);
 }

@@ -243,9 +243,9 @@ public class QuestionReferenceConfiguration : IEntityTypeConfiguration<QuestionR
     }
 }
 
-public class ExamArchiveConfiguration : IEntityTypeConfiguration<ExamArchive>
+public class ExamArchiveConfiguration : IEntityTypeConfiguration<ArchiveExam>
 {
-    public void Configure(EntityTypeBuilder<ExamArchive> builder)
+    public void Configure(EntityTypeBuilder<ArchiveExam> builder)
     {
         builder.HasKey(x => x.Id);
 

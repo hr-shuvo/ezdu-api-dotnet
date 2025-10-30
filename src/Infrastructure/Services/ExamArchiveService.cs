@@ -10,19 +10,19 @@ using Core.Shared.Models.Pagination;
 
 namespace Infrastructure.Services;
 
-public class ExamArchiveService : BaseService<ExamArchive>, IExamArchiveService
+public class ExamArchiveService : BaseService<ArchiveExam>, IExamArchiveService
 {
-    private readonly IBaseRepository<ExamArchive> _repository;
+    private readonly IBaseRepository<ArchiveExam> _repository;
     private readonly IQuestionService _questionService;
 
-    public ExamArchiveService(IBaseRepository<ExamArchive> repository, IQuestionService questionService) :
+    public ExamArchiveService(IBaseRepository<ArchiveExam> repository, IQuestionService questionService) :
         base(repository)
     {
         _repository = repository;
         _questionService = questionService;
     }
 
-    public async Task<PagedList<ExamArchive>> LoadAsync(ExamArchiveParams @params)
+    public async Task<PagedList<ArchiveExam>> LoadAsync(ExamArchiveParams @params)
     {
         var query = _repository.Query(@params.WithDeleted);
 
@@ -80,10 +80,10 @@ public class ExamArchiveService : BaseService<ExamArchive>, IExamArchiveService
 
         var result = await _repository.ExecuteListAsync(query, @params.PageNumber, @params.PageSize);
 
-        return new PagedList<ExamArchive>(result.Items, result.Count, @params.PageNumber, @params.PageSize);
+        return new PagedList<ArchiveExam>(result.Items, result.Count, @params.PageNumber, @params.PageSize);
     }
 
-    public async Task<ExamArchive> GetByIdAsync(long id)
+    public async Task<ArchiveExam> GetByIdAsync(long id)
     {
         var query = _repository.Query().Where(x => x.Id == id);
 
@@ -145,9 +145,9 @@ public class ExamArchiveService : BaseService<ExamArchive>, IExamArchiveService
 
     #region Private Methods
 
-    private static ExamArchive MapDtoToEntity(ExamArchiveDto dto, ExamArchive entity = null)
+    private static ArchiveExam MapDtoToEntity(ExamArchiveDto dto, ArchiveExam entity = null)
     {
-        entity ??= new ExamArchive { CreatedBy = UserContext.UserId };
+        entity ??= new ArchiveExam { CreatedBy = UserContext.UserId };
 
         entity.Id = dto.Id;
         entity.Name = dto.Name;
@@ -163,7 +163,7 @@ public class ExamArchiveService : BaseService<ExamArchive>, IExamArchiveService
         return entity;
     }
 
-    private static ExamArchiveDto MapEntityToDto(ExamArchive classEntity)
+    private static ExamArchiveDto MapEntityToDto(ArchiveExam classEntity)
     {
         return new ExamArchiveDto
         {
