@@ -4,9 +4,10 @@ using Core.Entities;
 using Core.Errors;
 using Core.QueryParams;
 using Core.Repositories;
+using Core.Services;
 using Core.Shared.Models.Pagination;
 
-namespace Core.Services;
+namespace Infrastructure.Services;
 
 public class TopicService : BaseService<Topic>, ITopicService
 {

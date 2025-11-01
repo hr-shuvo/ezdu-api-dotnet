@@ -22,6 +22,8 @@ public interface IBaseRepository<T> where T :class, IBaseEntity
     
     Task<T> RestoreAsync(long id);
     Task<T> ToggleStatusAsync(long id);
+    
+    Task<bool> RemoveRangeAsync(IEnumerable<T> entities);
 
     IQueryable<T> Query(bool withDeleted = false, bool asTracking = false);
     Task<T> ExecuteAsync(IQueryable<T> query, bool withDeleted = false, bool asTracking = false);

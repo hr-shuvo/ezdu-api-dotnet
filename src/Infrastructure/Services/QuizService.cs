@@ -71,32 +71,37 @@ public class QuizService : BaseService<Quiz>, IQuizService
     {
         var result = await _quizRepository.GetByIdAsync(id, asTracking, withDeleted);
 
-        var quizQuestions = await _unitOfWork.QuizQuestions.GetByQuizIdAsync(id);
-        result.Questions = quizQuestions;
+        if (result is not null)
+        {
+            // var quizQuestions = await _unitOfWork.QuizQuestions.GetByQuizIdAsync(id);
+            // result.Questions = quizQuestions;
+        }
 
         return result;
     }
 
-    public async Task<QuizResponseDto> GetByIdWithQuestionsAsync(long id, bool asTracking = false, bool withDeleted = false)
+    public async Task<QuizResponseDto> GetByIdWithQuestionsAsync(long id, bool asTracking = false,
+        bool withDeleted = false)
     {
         var result = await _quizRepository.GetByIdAsync(id, asTracking, withDeleted);
 
         if (result == null)
             throw new AppException(404, "Quiz not found");
-        
+
         var quizQuestions = await _unitOfWork.QuizQuestions.GetByQuizIdAsync(id);
         var questionIds = quizQuestions.Select(x => x.QuestionId).ToList();
 
         var questions = await _unitOfWork.Repository<Question>().Query().Where(x => questionIds.Contains(x.Id))
             .ToListAsync();
-        
-        var options = await _unitOfWork.Repository<Option>().Query().Where(x => questionIds.Contains(x.QuestionId)).ToListAsync();
-        
+
+        var options = await _unitOfWork.Repository<Option>().Query().Where(x => questionIds.Contains(x.QuestionId))
+            .ToListAsync();
+
         var quizDto = MapEntityToResponseDto(result, questions, options);
-        
+
         return quizDto;
     }
-    
+
 
     public async Task<ApiResponse> SaveAsync(QuizDto dto)
     {
@@ -175,11 +180,11 @@ public class QuizService : BaseService<Quiz>, IQuizService
 
         return entity;
     }
-    
+
     private static QuizResponseDto MapEntityToResponseDto(Quiz result, List<Question> questions, List<Option> options)
     {
         if (result == null) return null;
-        
+
         var mappedQuestions = questions
             .Select(q =>
             {
@@ -190,7 +195,7 @@ public class QuizService : BaseService<Quiz>, IQuizService
                 return q;
             })
             .ToList();
-        
+
         var dto = new QuizResponseDto
         {
             Id = result.Id,
@@ -204,15 +209,15 @@ public class QuizService : BaseService<Quiz>, IQuizService
             StartTime = result.StartTime,
             EndTime = result.EndTime,
             Status = result.Status,
-            
+
             CreatedAt = result.CreatedAt,
             UpdatedAt = result.UpdatedAt,
             CreatedBy = result.CreatedBy,
             UpdatedBy = result.UpdatedBy,
-            
+
             Questions = mappedQuestions,
         };
-        
+
         return dto;
     }
 

@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251030225056_ChangeArchiveTableName")]
+    partial class ChangeArchiveTableName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1063,60 +1066,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("UserProfile");
-                });
-
-            modelBuilder.Entity("Core.Entities.UserQuiz", b =>
-                {
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("Time")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<long?>("CreatedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("MarkPercentage")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(250)
-                        .HasColumnType("varchar(250)");
-
-                    b.Property<long>("QuizId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("QuizType")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Submissions")
-                        .HasMaxLength(5000)
-                        .HasColumnType("varchar(5000)");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<long?>("UpdatedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("Xp")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserId", "Time");
-
-                    b.ToTable("UserQuiz");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>

@@ -63,13 +63,13 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class, IBaseEntity
 
         return (count, result);
     }
-    
+
     public async Task<T> AddAsync(T entity)
     {
         var now = DateTime.UtcNow;
         entity.CreatedAt = now;
         entity.UpdatedAt = now;
-        
+
         DbSet.Add(entity);
 
         // await _context.SaveChangesAsync();
@@ -150,7 +150,7 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class, IBaseEntity
         if (entity == null) return null;
 
         if (entity.Status != Status.Deleted) return entity;
-        
+
         entity.Status = Status.Active;
         entity.UpdatedAt = DateTime.UtcNow;
         // await _context.SaveChangesAsync();
@@ -176,6 +176,15 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class, IBaseEntity
         return entity;
     }
 
+    public async Task<bool> RemoveRangeAsync(IEnumerable<T> entities)
+    {
+        if (entities == null)
+            return false;
+
+        DbSet.RemoveRange(entities);
+        return await _context.SaveChangesAsync() > 0;
+    }
+
     public IQueryable<T> Query(bool withDeleted = false, bool asTracking = false)
     {
         var query = asTracking ? DbSet.AsQueryable() : DbSet.AsNoTracking();
@@ -191,7 +200,8 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class, IBaseEntity
         return await query.FirstOrDefaultAsync();
     }
 
-    public async Task<(int Count, IEnumerable<T> Items)> ExecuteListAsync(IQueryable<T> queryable, int page = 1, int size = 10)
+    public async Task<(int Count, IEnumerable<T> Items)> ExecuteListAsync(IQueryable<T> queryable, int page = 1,
+        int size = 10)
     {
         var count = await queryable.CountAsync();
         var items = await queryable

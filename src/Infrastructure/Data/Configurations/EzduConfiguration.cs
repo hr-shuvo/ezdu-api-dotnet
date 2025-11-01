@@ -111,6 +111,18 @@ public class QuizConfiguration : IEntityTypeConfiguration<Quiz>
     }
 }
 
+public class UsrQuizConfiguration : IEntityTypeConfiguration<UserQuiz>
+{
+    public void Configure(EntityTypeBuilder<UserQuiz> builder)
+    {
+        builder.HasKey(x => new {x.UserId, x.Time});
+        builder.Property(x => x.Id).ValueGeneratedNever();
+        
+        builder.Property(x => x.Name).HasMaxLength(250);
+        builder.Property(x => x.Submissions).HasMaxLength(5000);
+    }
+}
+
 public class QuestionConfiguration : IEntityTypeConfiguration<Question>
 {
     public void Configure(EntityTypeBuilder<Question> builder)

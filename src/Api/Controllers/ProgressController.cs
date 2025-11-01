@@ -1,6 +1,4 @@
 using Core.App.Controllers;
-using Core.App.Utils;
-using Core.Entities;
 using Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -32,4 +30,7 @@ public class ProgressController : BaseApiController
 
         return Ok(progress);
     }
+    
+    
+    
 }

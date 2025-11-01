@@ -52,6 +52,13 @@ public enum DifficultyLevel
     VeryHard
 }
 
+public enum QuizType
+{
+    Mock = 1, // mock test by self
+    Quiz, // Quiz form admin provided
+    Archive, // Quiz from question bank (archive)
+}
+
 public enum AssignmentType
 {
     FileUpload = 1,

@@ -22,6 +22,8 @@ public static class AppDependencyExtensions
         services.AddScoped<ITopicService, TopicService>();
         services.AddScoped<IQuizService, QuizService>();
         services.AddScoped<IExamArchiveService, ExamArchiveService>();
+        services.AddScoped<IUserQuizService, UserQuizService>();
+        services.AddScoped<IDailyXpService, DailyXpService>();
         
         
         
