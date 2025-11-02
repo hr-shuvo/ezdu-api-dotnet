@@ -1,5 +1,6 @@
 using Core.App.Controllers;
 using Core.DTOs;
+using Core.Errors;
 using Core.QueryParams;
 using Core.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -29,6 +30,7 @@ public class UserQuizController : BaseApiController
     {
         var result = await _userQuizService.SaveAsync(dto);
 
-        return Ok(result);
+        // return Ok(result);
+        return Ok(new ApiResponse(200, "Congratulations!"));
     }
 }

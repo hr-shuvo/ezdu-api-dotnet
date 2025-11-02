@@ -43,13 +43,13 @@ public class ProgressService : BaseService<Progress>, IProgressService
         return result.Items;
     }
 
-    public async Task AddXpAsync(int newXp)
+    public async Task<Progress> AddXpAsync(int newXp)
     {
-        if (newXp < 1) return;
-
         var userId = UserContext.UserId;
-        
+
         var progress = await _repository.GetAsync(x => x.UserId == userId) ?? await CreateIfNotExists();
+        if (newXp < 1) return progress;
+        
         var today = DateTime.UtcNow.Date;
         var lastStreakDay = progress.LastStreakDay.Date;
 
@@ -64,9 +64,11 @@ public class ProgressService : BaseService<Progress>, IProgressService
 
 
         await _repository.UpdateAsync(progress);
-        // await _repository.SaveChangesAsync();
+        await _repository.SaveChangesAsync();
 
         await _dailyXpService.AddXpAsync(newXp);
+        
+        return progress;
     }
 
 

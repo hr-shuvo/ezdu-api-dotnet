@@ -10,5 +10,5 @@ namespace Core.Services;
 public interface IUserQuizService : IBaseService<UserQuiz>
 {
     Task<PagedList<UserQuiz>> LoadAsync(UserQuizParams query);
-    Task<ApiResponse> SaveAsync(UserQuizDto dto);
+    Task<Progress> SaveAsync(UserQuizDto dto);
 }

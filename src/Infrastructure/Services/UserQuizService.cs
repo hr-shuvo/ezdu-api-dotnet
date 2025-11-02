@@ -67,7 +67,7 @@ public class UserQuizService : BaseService<UserQuiz>, IUserQuizService
         return new PagedList<UserQuiz>(result.Items, result.Count, @params.PageNumber, @params.PageSize);
     }
 
-    public async Task<ApiResponse> SaveAsync(UserQuizDto dto)
+    public async Task<Progress> SaveAsync(UserQuizDto dto)
     {
         var userId = UserContext.UserId;
 
@@ -84,13 +84,13 @@ public class UserQuizService : BaseService<UserQuiz>, IUserQuizService
             // add to the database
             await _repository.AddAsync(newEntity);
             // update progress to add xp
-            await _progressService.AddXpAsync(newEntity.Xp);
+            var progress = await _progressService.AddXpAsync(newEntity.Xp);
             // save database
             await _repository.SaveChangesAsync();
 
             await transaction.CommitAsync();
 
-            return new ApiResponse(200, "Congratulations");
+            return progress;
         }
         catch (Exception)
         {
