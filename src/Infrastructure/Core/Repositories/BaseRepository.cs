@@ -212,6 +212,18 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class, IBaseEntity
         return (count, items);
     }
 
+    public async Task<IEnumerable<T>> ExecuteSqlQueryListAsync(string sql, params object[] parameters)
+    {
+        if (sql is null) return [];
+        
+        return await DbSet.FromSqlRaw(sql, parameters).ToListAsync();
+    }
+
+    public string GetTableName()
+    {
+        return DbSet.EntityType.GetTableName();
+    }
+
     public async Task<int> SaveChangesAsync()
     {
         return await _context.SaveChangesAsync();

@@ -3,6 +3,7 @@ using Core.DTOs;
 using Core.Errors;
 using Core.QueryParams;
 using Core.Services;
+using Core.Shared.Models.Pagination;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -91,13 +92,32 @@ public class QuestionsController : BaseApiController
 
 
 
+    #region Client Request
+
+
+    [HttpPost("by-topic-ids")]
+    public async Task<IActionResult> GetQuestionsByTopicId([FromBody] List<long> ids)
+    {
+        var result = await _questionService.LoadByTopicIdsAsync(ids);
+        
+        return Ok(result);
+    }
+
+    #endregion
+    
+    
+    
+    
+    
+    
+
 
     #region Questions Options
 
     [HttpPost("{questionId:long}/option-update/{optionId:long}")]
     public async Task<IActionResult> UpdateOption(long questionId, long optionId, [FromBody] OptionDto dto)
     {
-        ApiResponse result = await _questionService.UpdateOptionAsync(questionId, optionId, dto);
+        var result = await _questionService.UpdateOptionAsync(questionId, optionId, dto);
         
         return Ok(result);
     }

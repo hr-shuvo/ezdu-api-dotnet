@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using Core.App.Services;
 using Core.App.Utils;
 using Core.DTOs;
@@ -97,9 +96,9 @@ public class QuestionService : BaseService<Question>, IQuestionService
             question.Options = optionGroups.TryGetValue(question.Id, out var options) ? options : [];
             // question.Explanation = ""; // todo: load explanation (only if premium user)
         }
-        
+
         // todo: get answers (only if premium user)
-        
+
 
         return new PagedList<Question>(questionList, result.Count, @params.PageNumber, @params.PageSize);
     }
@@ -285,6 +284,45 @@ public class QuestionService : BaseService<Question>, IQuestionService
     public Task<int> RemoveOptionImage(long questionId, long optionId)
     {
         throw new NotImplementedException();
+    }
+
+    public async Task<PagedList<QuestionDto>> LoadByTopicIdsAsync(List<long> ids)
+    {
+        const int maxPageSize = 100;
+        const int maxOptionSize = maxPageSize * 10;
+
+        var query = _repository.Query();
+
+        query = query.OrderBy(x => EF.Functions.Random());
+        query = query.Where(x => ids.Contains(x.TopicId));
+
+        var result = await _repository.ExecuteListAsync(query, 1, maxPageSize);
+
+        var questionIds = result.Items.Select(x => x.Id).ToList();
+        var optionQuery = _optionRepository.Query(true)
+            .Where(x => questionIds.Contains(x.QuestionId));
+
+        var optionList = (await _optionRepository.ExecuteListAsync(optionQuery, 1, maxOptionSize)).Items.Select(opt =>
+            new OptionDto()
+            {
+                Id = opt.Id,
+                Name = opt.Name,
+                IsCorrect = opt.IsCorrect,
+                QuestionId = opt.QuestionId,
+            });
+        var optionGroups = optionList.GroupBy(x => x.QuestionId).ToDictionary(g => g.Key, g => g.ToList());
+
+
+        var questionList = result.Items.Select(q => new QuestionDto
+        {
+            Id = q.Id,
+            Name = q.Name,
+            Marks = q.Marks,
+            Options = optionGroups.TryGetValue(q.Id, out var options) ? options : [],
+        });
+
+
+        return new PagedList<QuestionDto>(questionList, result.Count, 1, maxPageSize);
     }
 
     // public async Task<PagedList<Question>> LoadQuestionsByExamIdAsync(long examId, bool withOptions = false)

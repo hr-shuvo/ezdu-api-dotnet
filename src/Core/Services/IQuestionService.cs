@@ -16,4 +16,5 @@ public interface IQuestionService : IBaseService<Question>
     Task<int> RemoveOptionImage(long questionId, long optionId);
     
     // Task<PagedList<Question>> LoadQuestionsByExamIdAsync(long examId, bool withOptions = false);
+    Task<PagedList<QuestionDto>> LoadByTopicIdsAsync(List<long> ids);
 }

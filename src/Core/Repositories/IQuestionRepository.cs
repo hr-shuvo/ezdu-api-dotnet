@@ -5,5 +5,4 @@ namespace Core.Repositories;
 
 public interface IQuestionRepository : IBaseRepository<Question>
 {
-    
 }

@@ -26,6 +26,8 @@ public interface IBaseService<TEntity> where TEntity : class, IBaseEntity
 
     Task<TEntity> RestoreAsync(long id);
     Task<TEntity> ToggleStatusAsync(long id);
+    
+    Task<IEnumerable<TEntity> > ExecuteSqlQueryListAsync(string sql, params object[] parameters);
 
     Task<int> SaveChangesAsync();
     Task<IDbContextTransaction> BeginTransactionAsync();

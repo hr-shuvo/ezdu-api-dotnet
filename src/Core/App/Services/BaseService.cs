@@ -77,6 +77,11 @@ public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class,
         return await _repository.ToggleStatusAsync(id);
     }
 
+    public async Task<IEnumerable<TEntity>> ExecuteSqlQueryListAsync(string sql, params object[] parameters)
+    {
+        return await _repository.ExecuteSqlQueryListAsync(sql, parameters);
+    }
+
     public async Task<int> SaveChangesAsync()
     {
         return await _repository.SaveChangesAsync();
