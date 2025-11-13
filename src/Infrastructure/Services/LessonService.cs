@@ -6,6 +6,7 @@ using Core.QueryParams;
 using Core.Repositories;
 using Core.Services;
 using Core.Shared.Models.Pagination;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Services;
 
@@ -13,11 +14,14 @@ public class LessonService : BaseService<Lesson>, ILessonService
 {
     private readonly ILessonRepository _repository;
     private readonly ISubjectService _subjectService;
+    private readonly ITopicRepository _topicRepository;
 
-    public LessonService(ILessonRepository repository, ISubjectService subjectService) : base(repository)
+    public LessonService(ILessonRepository repository, ISubjectService subjectService, ITopicRepository topicRepository) :
+        base(repository)
     {
         _repository = repository;
         _subjectService = subjectService;
+        _topicRepository = topicRepository;
     }
 
     public async Task<PagedList<Lesson>> LoadAsync(LessonParams @params)
@@ -124,6 +128,31 @@ public class LessonService : BaseService<Lesson>, ILessonService
         await _repository.SaveChangesAsync();
 
         return new ApiResponse(200, "Subject added successfully");
+    }
+
+    public async Task<PagedList<LessonWithTopicsDto>> LoadWithTopics(long subjectId)
+    {
+        const int maxLessonSize = 50;
+        const int maxTopicSize = 1000;
+        
+        var lessonResult = await _repository.LoadAsync(1, maxLessonSize, x => x.SubjectId == subjectId);
+        var topicResult = await _topicRepository.LoadAsync(1, maxTopicSize, x => x.SubjectId == subjectId);
+
+        var lessons = lessonResult.Items;
+        var topics = topicResult.Items;
+
+        var lessonWithTopics = lessons.Select(lesson => new LessonWithTopicsDto
+        {
+            Id = lesson.Id,
+            Name = lesson.Name,
+            Topics = topics.Where(t => t.LessonId == lesson.Id).Select(t => new TopicDtoMini
+            {
+                Id = t.Id,
+                Name = t.Name
+            }).ToList()
+        }).ToList();
+
+        return new PagedList<LessonWithTopicsDto>(lessonWithTopics, lessonWithTopics.Count, 1, maxLessonSize);
     }
 
 

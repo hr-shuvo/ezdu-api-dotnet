@@ -12,4 +12,5 @@ public interface ILessonService : IBaseService<Lesson>
     Task<PagedList<Lesson>> LoadAsync(LessonParams query);
     new Task<Lesson> GetByIdAsync(long id, bool asTracking = false, bool withDeleted = false);
     Task<ApiResponse> SaveAsync(LessonDto dto);
+    Task<PagedList<LessonWithTopicsDto>> LoadWithTopics(long subjectId);
 }

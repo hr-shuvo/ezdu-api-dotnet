@@ -19,7 +19,7 @@ public class LessonsController : BaseApiController
     {
         _lessonService = lessonService;
     }
-    
+
     [HttpGet]
     public async Task<IActionResult> GetList([FromQuery] LessonParams query)
     {
@@ -52,7 +52,7 @@ public class LessonsController : BaseApiController
 
         await _lessonService.SoftDeleteAsync(id);
         await _lessonService.SaveChangesAsync();
-        
+
         return Ok(new ApiResponse(200, "Lesson deleted successfully"));
     }
 
@@ -64,10 +64,10 @@ public class LessonsController : BaseApiController
 
         await _lessonService.PermanentDeleteAsync(id);
         await _lessonService.SaveChangesAsync();
-        
+
         return Ok(new ApiResponse(200, "Lesson deleted successfully"));
     }
-    
+
     [HttpPatch("restore/{id:long}")]
     public async Task<IActionResult> Restore(long id)
     {
@@ -76,20 +76,31 @@ public class LessonsController : BaseApiController
 
         var result = await _lessonService.RestoreAsync(id);
         await _lessonService.SaveChangesAsync();
-        
+
         return Ok(result);
     }
-    
-    
+
+
     [HttpPatch("toggle-status/{id:long}")]
     public async Task<IActionResult> ToggleStatus(long id)
     {
         if (!await _lessonService.ExistsAsync(id))
             throw new AppException(404, "Lesson not found");
 
-        var result =await _lessonService.ToggleStatusAsync(id);
+        var result = await _lessonService.ToggleStatusAsync(id);
         await _lessonService.SaveChangesAsync();
-        
+
+        return Ok(result);
+    }
+
+    [HttpGet("withtopics")]
+    public async Task<IActionResult> LoadLessonWithTopics([FromQuery] long subjectId = 0)
+    {
+        if (subjectId is 0)
+            throw new AppException(404, "Invalid subject Id");
+
+        var result = await _lessonService.LoadWithTopics(subjectId);
+
         return Ok(result);
     }
 }
