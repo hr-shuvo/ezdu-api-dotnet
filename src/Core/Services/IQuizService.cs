@@ -13,4 +13,5 @@ public interface IQuizService : IBaseService<Quiz>
     new Task<Quiz> GetByIdAsync(long id, bool asTracking = false, bool withDeleted = false);
     Task<QuizResponseDto> GetByIdWithQuestionsAsync(long id, bool asTracking = false, bool withDeleted = false);
     Task<ApiResponse> SaveAsync(QuizDto classDto);
+    Task<Quiz> GetUpcomingQuiz(long classId);
 }

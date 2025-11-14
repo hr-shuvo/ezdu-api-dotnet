@@ -17,7 +17,7 @@ public class QuizzesController : BaseApiController
     {
         _quizService = quizService;
     }
-    
+
     [HttpGet]
     public async Task<IActionResult> GetList([FromQuery] QuizParams query)
     {
@@ -32,7 +32,7 @@ public class QuizzesController : BaseApiController
         var classEntity = await _quizService.GetByIdAsync(id);
         return Ok(classEntity);
     }
-    
+
     [HttpGet("details/{id:long}")]
     public async Task<IActionResult> GetDetails(long id)
     {
@@ -57,7 +57,7 @@ public class QuizzesController : BaseApiController
 
         await _quizService.SoftDeleteAsync(id);
         await _quizService.SaveChangesAsync();
-        
+
         return Ok(new ApiResponse(200, "Quiz deleted successfully"));
     }
 
@@ -69,10 +69,10 @@ public class QuizzesController : BaseApiController
 
         await _quizService.PermanentDeleteAsync(id);
         await _quizService.SaveChangesAsync();
-        
+
         return Ok(new ApiResponse(200, "Quiz deleted successfully"));
     }
-    
+
     [HttpPatch("restore/{id:long}")]
     public async Task<IActionResult> Restore(long id)
     {
@@ -81,20 +81,48 @@ public class QuizzesController : BaseApiController
 
         var result = await _quizService.RestoreAsync(id);
         await _quizService.SaveChangesAsync();
-        
+
         return Ok(result);
     }
-    
-    
+
+
     [HttpPatch("toggle-status/{id:long}")]
     public async Task<IActionResult> ToggleStatus(long id)
     {
         if (!await _quizService.ExistsAsync(id))
             throw new AppException(404, "Quiz not found");
 
-        var result =await _quizService.ToggleStatusAsync(id);
+        var result = await _quizService.ToggleStatusAsync(id);
         await _quizService.SaveChangesAsync();
-        
+
         return Ok(result);
     }
+
+
+    #region Client Request
+
+    [HttpGet("upcomming/{classId:long}")]
+    public async Task<IActionResult> GetQuizzes(long classId = 0)
+    {
+        if (classId == 0)
+        {
+            throw new AppException(400, "Invalid classId");
+        }
+
+        var result = await _quizService.GetUpcomingQuiz(classId);
+
+        if (result is null)
+        {
+            throw new AppException(404, "Quiz not found");
+        }
+
+        return Ok(new
+        {
+            Id = result.Id,
+            Name = result.Name,
+            StartTime = result.StartTime,
+        });
+    }
+
+    #endregion
 }

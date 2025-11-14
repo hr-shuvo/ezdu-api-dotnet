@@ -160,6 +160,18 @@ public class QuizService : BaseService<Quiz>, IQuizService
         }
     }
 
+    public async Task<Quiz> GetUpcomingQuiz(long classId)
+    {
+        var query = _quizRepository.Query().Where(x =>
+                // x.ClassId == classId && 
+                x.EndTime > DateTime.UtcNow)
+            .OrderBy(x => x.StartTime);
+
+        var result = await _quizRepository.ExecuteAsync(query);
+
+        return result;
+    }
+
 
     #region Private Methods
 

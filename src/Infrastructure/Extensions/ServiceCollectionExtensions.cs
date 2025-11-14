@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Core.App.Repositories.Interfaces;
 using Core.App.Services;
@@ -22,6 +23,7 @@ public static class ServiceCollectionExtensions
         {
             options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
             options.JsonSerializerOptions.WriteIndented = true;
+            options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
         });
         
         services.AddDatabaseServices(configuration);
