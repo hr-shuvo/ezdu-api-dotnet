@@ -17,15 +17,13 @@ public class DailyXpService : BaseService<DailyXp>, IDailyXpService
         _repository = repository;
     }
 
-    public async Task AddXpAsync(int newXp)
+    public async Task<int> AddXpAsync(int newXp)
     {
         var userId = UserContext.UserId;
         var today = DateTime.UtcNow.Date;
-        var tomorrow = today.AddDays(1);
 
-        await CleanupOldDailyXpAsync(userId);
+        var (totalXpAfterLastFriday, todayXp) = await ProcessDailyXpAsync(userId, today);
 
-        var todayXp = await _repository.GetAsync(x => x.UserId == userId && x.Day >= today && x.Day < tomorrow);
         if (todayXp is null)
         {
             await _repository.AddAsync(new DailyXp { UserId = userId, Day = today, Xp = newXp });
@@ -37,14 +35,25 @@ public class DailyXpService : BaseService<DailyXp>, IDailyXpService
         }
 
         // await _repository.SaveChangesAsync();
+
+        return totalXpAfterLastFriday + newXp;
     }
 
-    private async Task CleanupOldDailyXpAsync(long userId)
+    private async Task<(int totalXpAfterLastFriday, DailyXp todayXp)> ProcessDailyXpAsync(long userId,  DateTime today)
     {
+        var lastFriday = GetLastFriday(today);
+        
         var userDailyXps = await _repository.Query()
             .Where(x => x.UserId == userId)
             .OrderBy(x => x.Day)
             .ToListAsync();
+        
+        var todayXp = userDailyXps.FirstOrDefault(x => x.Day.Date == today);
+        
+        var totalXpAfterLastFriday = userDailyXps
+            .Where(x => x.Day.Date > lastFriday)
+            .Sum(x => x.Xp);
+        
 
         if (userDailyXps.Count > MaxDailyXp)
         {
@@ -57,5 +66,13 @@ public class DailyXpService : BaseService<DailyXp>, IDailyXpService
                 // NOTE: Do NOT call SaveChangesAsync() here.
             }
         }
+        
+        return (totalXpAfterLastFriday, todayXp);
+    }
+    
+    private static DateTime GetLastFriday(DateTime today)
+    {
+        var daysSinceFriday = ((int)today.DayOfWeek - (int)DayOfWeek.Friday + 7) % 7;
+        return today.AddDays(-daysSinceFriday);
     }
 }

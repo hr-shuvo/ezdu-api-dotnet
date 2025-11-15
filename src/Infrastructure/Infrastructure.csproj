@@ -7,7 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="BackgroundJobs\" />
       <Folder Include="Services\Cashing\" />
       <Folder Include="Services\External\" />
     </ItemGroup>

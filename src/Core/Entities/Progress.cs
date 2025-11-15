@@ -11,7 +11,9 @@ public class Progress: BaseEntity
     public string UserImageUrl { get; set; }
 
     public int TotalXp { get; set; }
+    public int WeekXp { get; set; }
     public DateTime LastStreakDay { get; set; }
+    public DateTime LastResetDate { get; set; }
     public int StreakCount { get; set; }
 
     public ICollection<DailyXp> DailyXps { get; set; } = [];

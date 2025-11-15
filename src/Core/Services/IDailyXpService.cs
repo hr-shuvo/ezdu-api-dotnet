@@ -5,5 +5,5 @@ namespace Core.Services;
 
 public interface IDailyXpService : IBaseService<DailyXp>
 {
-    Task AddXpAsync(int newXp);
+    Task<int> AddXpAsync(int newXp);
 }

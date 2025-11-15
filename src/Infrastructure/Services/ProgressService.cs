@@ -62,11 +62,11 @@ public class ProgressService : BaseService<Progress>, IProgressService
                 : 1;
         // todo: add max streak 
 
+        progress.WeekXp = await _dailyXpService.AddXpAsync(newXp);
 
         await _repository.UpdateAsync(progress);
         await _repository.SaveChangesAsync();
 
-        await _dailyXpService.AddXpAsync(newXp);
         
         return progress;
     }

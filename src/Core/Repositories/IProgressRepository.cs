@@ -5,5 +5,5 @@ namespace Core.Repositories;
 
 public interface IProgressRepository : IBaseRepository<Progress>
 {
-    
+    Task ResetWeeklyProgressAsync();
 }
